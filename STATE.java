@@ -1,0 +1,8 @@
+/* ENUMERATOR FOR GAME STATES */
+
+public enum STATE {
+  MENU,
+  PLAYZONE
+  // PAUSE
+  // SETTINGS
+}
