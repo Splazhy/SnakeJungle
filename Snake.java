@@ -11,6 +11,7 @@ public abstract class Snake {
   protected int normalSpeed;
   protected int sprintSpeed;
   protected ArrayList<SnakePart> hitbox;
+  protected GridMap gridMap;
 
   protected BufferedImage[] headSprite;
   protected BufferedImage[] bodySprite;
@@ -28,9 +29,10 @@ public abstract class Snake {
    */
   protected int size;
 
-  public Snake() {
-    normalSpeed = 3;
-    sprintSpeed = 7;
+  public Snake(GridMap gridMap) {
+    this.gridMap = gridMap;
+    normalSpeed = 1;
+    sprintSpeed = 3;
     curSpeed = normalSpeed;
   }
 

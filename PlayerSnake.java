@@ -7,22 +7,25 @@ public class PlayerSnake extends Snake {
   private KeyHandler keyH;
   protected boolean isSprinting;
 
-  public PlayerSnake(KeyHandler keyH) throws IOException {
-    super();
+  public PlayerSnake(GridMap gridMap, KeyHandler keyH) {
+    super(gridMap);
     x = 328; y = 328;
     facing = 3;
     this.keyH = keyH;
     isSprinting = false;
+    try {
+      headSprite = new BufferedImage[4];
+      headSprite[0] = ImageIO.read(new File("sprites/snake/playerhead_up.png"));
+      headSprite[1] = ImageIO.read(new File("sprites/snake/playerhead_left.png"));
+      headSprite[2] = ImageIO.read(new File("sprites/snake/playerhead_down.png"));
+      headSprite[3] = ImageIO.read(new File("sprites/snake/playerhead_right.png"));
 
-    headSprite = new BufferedImage[4];
-    headSprite[0] = ImageIO.read(new File("sprites/snake/playerhead_up.png"));
-    headSprite[1] = ImageIO.read(new File("sprites/snake/playerhead_left.png"));
-    headSprite[2] = ImageIO.read(new File("sprites/snake/playerhead_down.png"));
-    headSprite[3] = ImageIO.read(new File("sprites/snake/playerhead_right.png"));
+      bodySprite = new BufferedImage[6];
 
-    bodySprite = new BufferedImage[6];
-
-    tailSprite = new BufferedImage[4];
+      tailSprite = new BufferedImage[4];
+    } catch(IOException e) {
+      e.printStackTrace();
+    }
   }
 
   public void tick() {

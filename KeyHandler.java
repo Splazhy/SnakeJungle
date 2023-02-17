@@ -1,4 +1,6 @@
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.plaf.ColorUIResource;
 
 public class KeyHandler implements KeyListener {
@@ -50,7 +52,7 @@ public class KeyHandler implements KeyListener {
     if(GamePanel.state == STATE.MENU && released == KeyEvent.VK_ENTER) {
       GamePanel.state = STATE.PLAYZONE;
       GamePanel.isLoading = true;
-      gp.setBackground(new ColorUIResource(130, 134, 64));
+      gp.setBackground(Color.BLACK);
     }
     if(GamePanel.state == STATE.PLAYZONE) {
       if(released == KeyEvent.VK_ESCAPE) {

@@ -1,5 +1,6 @@
-/* ENUMERATOR FOR GAME STATES */
-
+/**
+ * Define state of this program
+*/
 public enum STATE {
   MENU,
   PLAYZONE
