@@ -6,8 +6,6 @@ import javax.swing.plaf.ColorUIResource;
 
 public class GamePanel extends JPanel implements Runnable {
   public static STATE state;
-  protected static int sizeX;
-  protected static int sizeY;
   protected static boolean isLoading;
   private KeyHandler keyH;
   private GraphicUI graphicUI;
@@ -19,15 +17,14 @@ public class GamePanel extends JPanel implements Runnable {
     keyH = new KeyHandler(this);
     graphicUI = new GraphicUI(this);
 
-    sizeX = 640; sizeY = 640; // change sizes here
     isLoading = false; // true when ENTER is pressed on STATE.MENU
 
-    this.setLayout(null);
-    this.setPreferredSize(new Dimension(sizeX,sizeY));
-    this.setDoubleBuffered(true);
-    this.setBackground(new ColorUIResource(24, 34, 40));
-    this.addKeyListener(keyH);
-    this.setFocusable(true);
+    setLayout(null);
+    setPreferredSize(new Dimension(640, 640));
+    setDoubleBuffered(true);
+    setBackground(new ColorUIResource(24, 34, 40));
+    addKeyListener(keyH);
+    setFocusable(true);
   }
 
   public void start() {
@@ -55,7 +52,7 @@ public class GamePanel extends JPanel implements Runnable {
       repaint();
       if(player != null) {
         try {
-          Thread.sleep((int)(1.02*(11-player.speed)));
+          Thread.sleep((int)(1.05*(11-player.curSpeed)));
         } catch(InterruptedException e) {
           e.printStackTrace();
         }
@@ -70,7 +67,7 @@ public class GamePanel extends JPanel implements Runnable {
   }
 
   @Override
-  public void paint(Graphics g) {
+  public void paintComponent(Graphics g) {
     super.paintComponent(g);
     Graphics2D g2d = (Graphics2D)g;
 

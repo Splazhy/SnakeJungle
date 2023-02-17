@@ -1,24 +1,30 @@
-import java.awt.Color;
 import java.io.IOException;
-
 import javax.swing.JFrame;
+import java.awt.event.*;
 
 public class Main extends JFrame {
+  protected static int width;
+  protected static int height;
   protected GamePanel gamePanel;
 
   public Main() throws IOException {
 
     gamePanel = new GamePanel();
-
-    this.add(gamePanel);
-    this.setTitle("Snake Jungle (prototype)");
-    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    this.setForeground(Color.WHITE);
-    this.setBackground(Color.WHITE);
-    this.pack();
-    this.setLocationRelativeTo(null);
-    this.setResizable(false);
-    this.setVisible(true);
+    
+    add(gamePanel);
+    addComponentListener(new ComponentAdapter() {
+      @Override
+      public void componentResized(ComponentEvent e) {
+        width = getSize().width;
+        height = getSize().height;
+      }
+    });
+    setTitle("Snake Jungle (prototype)");
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    pack();
+    setLocationRelativeTo(null);
+    setResizable(true);
+    setVisible(true);
     
     gamePanel.start();
   }

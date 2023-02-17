@@ -7,19 +7,12 @@ public class PlayerSnake extends Snake {
   private KeyHandler keyH;
   protected boolean isSprinting;
 
-  /**
-   * Snake's head sprites, each member in array is according to {@code Snake.facing}
-   * @see Snake
-   */
-  protected final BufferedImage[] headSprite;
-  protected final BufferedImage[] bodySprite;
-  protected final BufferedImage[] tailSprite;
-
   public PlayerSnake(KeyHandler keyH) throws IOException {
     super();
+    x = 328; y = 328;
+    facing = 3;
     this.keyH = keyH;
     isSprinting = false;
-    speed = 0;
 
     headSprite = new BufferedImage[4];
     headSprite[0] = ImageIO.read(new File("sprites/snake/playerhead_up.png"));
@@ -39,45 +32,49 @@ public class PlayerSnake extends Snake {
       isSprinting = false;
     }
     if(isSprinting) {
-      speed = 7;
+      curSpeed = sprintSpeed;
     } else {
-      speed = 3;
+      curSpeed = normalSpeed;
     }
     if(keyH.movementIsHeld[0] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]) {
       x /= 16;
       x *= 16;
+      x += 8;
       facing = 0;
     }
     if(keyH.movementIsHeld[1] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]) {
       y /= 16;
       y *= 16;
+      y += 8;
       facing = 1;
     }
     if(keyH.movementIsHeld[2] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]) {
       x /= 16;
       x *= 16;
+      x += 8;
       facing = 2;
     }
     if(keyH.movementIsHeld[3] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]) {
       y /= 16;
       y *= 16;
+      y += 8;
       facing = 3;
     }
     switch(facing) {
       case 0:
-        if(y > 0)
+        if(y > 8)
           y--; 
         break;
       case 1:
-        if(x > 0)
+        if(x > 8)
           x--;
         break;
       case 2:
-        if(y < GamePanel.sizeY-16)
+        if(y < Main.height-8)
           y++;
         break;
       case 3:
-        if(x < GamePanel.sizeX-16)
+        if(x < Main.width-8)
           x++;
         break;
     }
