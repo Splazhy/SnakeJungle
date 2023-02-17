@@ -1,10 +1,12 @@
 import java.io.IOException;
 import javax.swing.JFrame;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class Main extends JFrame {
   protected static int width;
   protected static int height;
+  protected static boolean isUpdatingFrameSize;
   protected GamePanel gamePanel;
 
   public Main() throws IOException {
@@ -17,6 +19,7 @@ public class Main extends JFrame {
       public void componentResized(ComponentEvent e) {
         width = getSize().width;
         height = getSize().height;
+        isUpdatingFrameSize = true;
       }
     });
     setTitle("Snake Jungle (prototype)");

@@ -1,16 +1,18 @@
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.io.IOException;
-
-import javax.swing.*;
+import javax.swing.JPanel;
 import javax.swing.plaf.ColorUIResource;
 
 public class GamePanel extends JPanel implements Runnable {
-  public static STATE state;
+  protected static STATE state;
   protected static boolean isLoading;
   private KeyHandler keyH;
   private GraphicUI graphicUI;
   private Thread gameThread;
 
+  protected GridMap gridMap;
   protected PlayerSnake player;
 
   public GamePanel() throws IOException {
@@ -39,12 +41,8 @@ public class GamePanel extends JPanel implements Runnable {
       if(state == STATE.PLAYZONE) {
         if(isLoading) {
           System.out.println("lesss go!");
-          try {
-            player = new PlayerSnake(keyH);
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-
+          gridMap = new GridMap();
+          player = new PlayerSnake(gridMap, keyH);
           isLoading = false;
         }
         update();
@@ -52,7 +50,7 @@ public class GamePanel extends JPanel implements Runnable {
       repaint();
       if(player != null) {
         try {
-          Thread.sleep((int)(1.05*(11-player.curSpeed)));
+          Thread.sleep((int)(1.05*(6-player.curSpeed)));
         } catch(InterruptedException e) {
           e.printStackTrace();
         }
