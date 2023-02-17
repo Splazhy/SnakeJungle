@@ -24,21 +24,23 @@ public class GraphicUI {
       case MENU:
         g2d.setColor(Color.ORANGE);
         g2d.setFont(titleFont);
-        g2d.drawString("Snake", getCenteredX("Snake", g2d), 200);
-        g2d.drawString("Jungle", getCenteredX("Jungle", g2d), 280);
+        g2d.drawString("Snake", getCenteredX("Snake", g2d), (Main.height/2)-80);
+        g2d.drawString("Jungle", getCenteredX("Jungle", g2d), Main.height/2);
         g2d.setFont(normalFont);
         g2d.drawString("press ENTER to play!"
-          ,getCenteredX("press ENTER to play!", g2d), 460);
+          ,getCenteredX("press ENTER to play!", g2d), (Main.height/2)+200);
         break;
       case PLAYZONE:
-        g2d.drawImage(gridmap, null, 0, 0);
+        g2d.drawImage(gridmap,0,0,Main.width,Main.height,null);
         if(gp.player != null) {
-          g2d.drawImage(gp.player.headSprite[gp.player.facing], gp.player.x, gp.player.y, null);
+          g2d.drawImage(gp.player.headSprite[gp.player.facing], gp.player.x-8, gp.player.y-8, Main.width/64, Main.height/36, null);
+          // TO-DO draw whole body
         }
         g2d.setColor(Color.WHITE);
         g2d.drawString(gp.player.toString(), 500, 500);
         break;
     }
+    g2d.drawString(String.format("res:%dx%d",Main.width,Main.height), 400, 500);
   }
 
   /**
@@ -49,6 +51,6 @@ public class GraphicUI {
    */
   private static int getCenteredX(String text, Graphics2D g2d) {
     int length = (int)g2d.getFontMetrics().getStringBounds(text, g2d).getWidth();
-    return GamePanel.sizeX/2 - length/2;
+    return Main.width/2 - length/2;
   }
 }
