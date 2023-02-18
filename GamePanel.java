@@ -1,6 +1,7 @@
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.io.IOException;
 import javax.swing.JPanel;
 import javax.swing.plaf.ColorUIResource;
@@ -50,7 +51,7 @@ public class GamePanel extends JPanel implements Runnable {
       repaint();
       if(player != null) {
         try {
-          Thread.sleep((int)(1.05*(6-player.curSpeed)));
+          Thread.sleep(Math.round(21*(-Math.log(player.curSpeed)/Math.log(2))+50));
         } catch(InterruptedException e) {
           e.printStackTrace();
         }
@@ -68,6 +69,7 @@ public class GamePanel extends JPanel implements Runnable {
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
     Graphics2D g2d = (Graphics2D)g;
+    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 
     graphicUI.drawUI(g2d);
     

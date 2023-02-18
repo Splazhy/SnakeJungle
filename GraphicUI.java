@@ -12,7 +12,6 @@ public class GraphicUI {
   private Font normalFont;
 
   private GridMap gridMap;
-  private int[] gridMapOffset;
 
   public GraphicUI(GamePanel gp) throws IOException {
     this.gp = gp;
@@ -34,24 +33,25 @@ public class GraphicUI {
         break;
       case PLAYZONE:
         if(Main.isUpdatingFrameSize) {
-          gridMapOffset = getGridMapOffset();
-
+          gridMap.update();
           Main.isUpdatingFrameSize = false;
         }
         g2d.setColor(Color.WHITE);
-        g2d.drawImage(gridMap.img, gridMapOffset[0], gridMapOffset[1]
-        ,gridMapOffset[2], gridMapOffset[2], null);
-        g2d.drawString(Arrays.toString(gridMapOffset),100,100);
+        g2d.drawImage(gridMap.img, gridMap.offset[0], gridMap.offset[1]
+        ,gridMap.offset[2], gridMap.offset[2], null);
+        g2d.drawString(Arrays.toString(gridMap.offset),100,100); // debug
         if(gp.player != null) {
+          g2d.drawString(Arrays.toString(gp.player.cellPos),100,150); // debug
           g2d.drawString(gp.player.toString(), 500, 500); // debug
           g2d.drawImage(gp.player.headSprite[gp.player.facing]
-          ,gp.player.x-8, gp.player.y-8
-          ,Main.width/32, Main.height/32, null);
+          ,gp.player.x, gp.player.y
+          ,gridMap.offset[2]/GridMap.cellsLength
+          ,gridMap.offset[2]/GridMap.cellsLength, null);
           // TO-DO draw whole body (for loop maybe)
         }
         break;
     }
-    g2d.drawString(String.format("res:%dx%d",Main.width,Main.height), 400, 500); // debugging
+    g2d.drawString(String.format("res:%dx%d",Main.width,Main.height), 100, 50); // debugging
   }
 
   /**
@@ -63,17 +63,5 @@ public class GraphicUI {
   private static int getCenteredX(String text, Graphics2D g2d) {
     int length = (int)g2d.getFontMetrics().getStringBounds(text, g2d).getWidth();
     return Main.width/2 - length/2;
-  }
-
-  /**
-   * 
-   * @return [0] x position, [1] y position, [2] square size
-   */
-  private static int[] getGridMapOffset() {
-    int[] arr = new int[3];
-    arr[2] = Math.min(Main.width-Main.width/3, Main.height-Main.height/8);
-    arr[0] = Main.width/2 - arr[2]/2;
-    arr[1] = Main.height/2 - arr[2]/2;
-    return arr;
   }
 }

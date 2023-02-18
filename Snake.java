@@ -1,17 +1,17 @@
 import java.util.ArrayList;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
 
 /**
  * Snake in this game moves progressively, not cell-by-cell.
+ * @see PlayerSnake
  */
 public abstract class Snake {
   protected int x;
   protected int y;
-  protected int curSpeed;
-  protected int normalSpeed;
-  protected int sprintSpeed;
+  protected double curSpeed;
+  protected double normalSpeed;
   protected ArrayList<SnakePart> hitbox;
-  protected GridMap gridMap;
+  protected int[] cellPos;
 
   protected BufferedImage[] headSprite;
   protected BufferedImage[] bodySprite;
@@ -23,17 +23,15 @@ public abstract class Snake {
    * 3 for RIGHT <p>
    */
   protected int facing;
-  /**
-   * Represents size of the snake
-   * excluding head and tail.
-   */
-  protected int size;
 
   public Snake(GridMap gridMap) {
-    this.gridMap = gridMap;
-    normalSpeed = 1;
-    sprintSpeed = 3;
+    normalSpeed = 2.4;
     curSpeed = normalSpeed;
+    cellPos = new int[2];
+  }
+
+  protected void getCellPos(int x, int y) {
+    cellPos = GridMap.getCellPos(x, y);
   }
 
   /**
