@@ -3,7 +3,7 @@
 */
 public enum STATE {
   MENU,
-  PLAYZONE
-  // PAUSE
+  PLAYZONE,
+  PAUSE
   // SETTINGS
 }

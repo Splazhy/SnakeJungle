@@ -9,8 +9,9 @@ public class PlayerSnake extends Snake {
   protected double sprintSpeed;
 
   public PlayerSnake(GridMap gridMap, KeyHandler keyH) {
-    super(gridMap);
+    super();
     normalSpeed = 4.0;
+    // normalSpeed = 1.0; // debug
     sprintSpeed = 4.7;
     x = GridMap.cellLayout[20][10][0];
     y = GridMap.cellLayout[20][10][1];
@@ -62,25 +63,24 @@ public class PlayerSnake extends Snake {
     }
     switch(facing) {
       case 0:
-      if(y > GridMap.cellLayout[0][0][1])
-        y--; 
+        y = (y > GridMap.offset[1]-GridMap.cellSize) ? --y : GridMap.offset[1]+GridMap.offset[2]-GridMap.cellSize;
       break;
       case 1:
-      if(x > GridMap.cellLayout[0][0][0])
-        x--;
+        x = (x > GridMap.offset[0]-GridMap.cellSize) ? --x : GridMap.offset[0]+GridMap.offset[2]-GridMap.cellSize;
       break;
       case 2:
-      if(y < GridMap.cellLayout[39][0][1])
-        y++;
+        y = (y < GridMap.offset[1]+GridMap.offset[2]-GridMap.cellSize) ? ++y : GridMap.offset[1]-GridMap.cellSize;
       break;
       case 3:
-      if(x < GridMap.cellLayout[0][39][0])
-        x++;
+        x = (x < GridMap.offset[0]+GridMap.offset[2]-GridMap.cellSize) ? ++x : GridMap.offset[0]-GridMap.cellSize;
       break;
     }
     cellPos = GridMap.getCellPos(x, y);
   }
   
+  /**
+   * for debugging purpose
+   */
   @Override
   public String toString() {
     return String.format("[%d,%d]",x,y);

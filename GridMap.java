@@ -1,16 +1,16 @@
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
 public class GridMap {
   protected final static int length = 40;
+  protected static int cellSize;
   /**
-   * [0]: x position, [1]: y position, [3]: square side length
+   * [0]: x position, [1]: y position, [2]: square side length
    */
-  protected int[] offset;
+  protected static int[] offset;
   protected static int[][][] cellLayout; // [y][x]{x,y}
   protected BufferedImage img;
 
@@ -33,10 +33,10 @@ public class GridMap {
     offset[0] = Main.width/2 - offset[2]/2;
     offset[1] = Main.height/2 - offset[2]/2;
     
-    int cellLeft = 40;
+    int cellLeft = length;
     int areaTaken = 0;
     double area = offset[2];
-    int[] cellArea = new int[40];
+    int[] cellArea = new int[length];
     
     for(int i = 0; i < cellArea.length; i++) {
       cellArea[i] = (int)Math.round((area - areaTaken) / cellLeft);
@@ -44,11 +44,11 @@ public class GridMap {
       cellLeft--;
     }
 
-    int a = cellArea[0];
+    cellSize = cellArea[0];
     int b = 0;
     int bCnt = 0;
     for(int i = 1; i < cellArea.length; i++) {
-      if(cellArea[i] != a) {
+      if(cellArea[i] != cellSize) {
         b = cellArea[i];
         bCnt++;
       }
@@ -59,7 +59,7 @@ public class GridMap {
     int idxToFill = 0;
     for(int i = 1; i <= bCnt; i++) {
       while(idxToFill < Math.round(bRatio*i)-1) {
-        cellArea[idxToFill] = a;
+        cellArea[idxToFill] = cellSize;
         idxToFill++;
       }
       cellArea[(int)Math.round(bRatio*i)-1] = b;
@@ -77,9 +77,15 @@ public class GridMap {
       posY += cellArea[i];
       cellLeft--;
     }
-    System.out.println(Arrays.toString(cellArea)); // debug
+    // System.out.println(Arrays.toString(cellArea)); // debug
   }
 
+  /**
+   * FOR SNAKE OBJECT ONLY
+   * @param x
+   * @param y
+   * @return snake postions according frame and gridmap
+   */
   protected static int[][] getCellPos(int x, int y) {
     int cellX = -1, cellY = -1;
     int markXMinDist = Integer.MAX_VALUE;
@@ -94,6 +100,20 @@ public class GridMap {
         markYMinDist = Math.abs(y-cellLayout[i][0][1]);
         cellY = i;
       }
+    }
+    if(cellX == 0) {
+      cellX = (Math.abs(x-cellLayout[0][0][0])
+        > Math.abs(x-(cellLayout[0][0][0]-cellSize))) ? 39 : 0;
+    } else if(cellX == length-1) {
+      cellX = (Math.abs(x-cellLayout[0][39][0])
+        > Math.abs(x-(cellLayout[0][39][0]+cellSize))) ? 0 : 39;
+    }
+    if(cellY == 0) {
+      cellY = (Math.abs(y-cellLayout[0][0][1])
+        > Math.abs(y-(cellLayout[0][0][1]-cellSize))) ? 39 : 0;
+    } else if(cellY == length-1) {
+      cellY = (Math.abs(y-cellLayout[39][0][1])
+        > Math.abs(y-(cellLayout[39][0][1]+cellSize))) ? 0 : 39;
     }
     return new int[][] {cellLayout[cellY][cellX], {cellX, cellY}};
   }

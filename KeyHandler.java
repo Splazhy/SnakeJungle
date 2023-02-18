@@ -57,11 +57,18 @@ public class KeyHandler implements KeyListener {
           gp.setBackground(Color.BLACK);
         }
         break;
-      case PLAYZONE:
+      case PAUSE:
         if(released == KeyEvent.VK_ESCAPE) {
+          GamePanel.state = STATE.PLAYZONE;
+        } else if(released == KeyEvent.VK_ENTER) {
           GamePanel.state = STATE.MENU;
           gp.player = null;
           gp.setBackground(new ColorUIResource(24, 34, 40));
+        }
+        break;
+      case PLAYZONE:
+        if(released == KeyEvent.VK_ESCAPE) {
+          GamePanel.state = STATE.PAUSE;
         }
         if(released == KeyEvent.VK_W) {
           movementIsHeld[0] = false;
