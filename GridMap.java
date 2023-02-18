@@ -6,17 +6,17 @@ import java.util.Arrays;
 import javax.imageio.ImageIO;
 
 public class GridMap {
-  protected final static int cellsLength = 40;
+  protected final static int length = 40;
   /**
    * [0]: x position, [1]: y position, [3]: square side length
    */
   protected int[] offset;
-  protected static int[][][] cellPos; // [y][x]{x,y}
+  protected static int[][][] cellLayout; // [y][x]{x,y}
   protected BufferedImage img;
 
   protected GridMap() {
     offset = new int[3];
-    cellPos = new int[40][40][2];
+    cellLayout = new int[length][length][2];
     update();
     try {
       img = ImageIO.read(new File("sprites/background/gridmap.png"));
@@ -55,7 +55,7 @@ public class GridMap {
     }
     if(b == 0)
       return;
-    double bRatio = 40d/bCnt;
+    double bRatio = (double)length/bCnt;
     int idxToFill = 0;
     for(int i = 1; i <= bCnt; i++) {
       while(idxToFill < Math.round(bRatio*i)-1) {
@@ -67,11 +67,11 @@ public class GridMap {
     }
 
     int posY = offset[1];
-    for(int i = 0; i < cellPos.length; i++) {
+    for(int i = 0; i < cellLayout.length; i++) {
       int posX = offset[0];
-      for(int j = 0; j < cellPos[i].length; j++) {
-        cellPos[i][j][0] = posX;
-        cellPos[i][j][1] = posY;
+      for(int j = 0; j < cellLayout[i].length; j++) {
+        cellLayout[i][j][0] = posX;
+        cellLayout[i][j][1] = posY;
         posX += cellArea[j];
       }
       posY += cellArea[i];
@@ -80,21 +80,21 @@ public class GridMap {
     System.out.println(Arrays.toString(cellArea)); // debug
   }
 
-  protected static int[] getCellPos(int x, int y) {
+  protected static int[][] getCellPos(int x, int y) {
     int cellX = -1, cellY = -1;
     int markXMinDist = Integer.MAX_VALUE;
     int markYMinDist = Integer.MAX_VALUE;
 
-    for(int i = 0; i < cellPos.length; i++) {
-      if(Math.abs(x-cellPos[0][i][0]) < markXMinDist) {
-        markXMinDist = Math.abs(x-cellPos[0][i][0]);
+    for(int i = 0; i < cellLayout.length; i++) {
+      if(Math.abs(x-cellLayout[0][i][0]) < markXMinDist) {
+        markXMinDist = Math.abs(x-cellLayout[0][i][0]);
         cellX = i;
       }
-      if(Math.abs(y-cellPos[i][0][1]) < markYMinDist) {
-        markYMinDist = Math.abs(y-cellPos[i][0][1]);
+      if(Math.abs(y-cellLayout[i][0][1]) < markYMinDist) {
+        markYMinDist = Math.abs(y-cellLayout[i][0][1]);
         cellY = i;
       }
     }
-    return cellPos[cellY][cellX];
+    return new int[][] {cellLayout[cellY][cellX], {cellX, cellY}};
   }
 }

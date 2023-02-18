@@ -11,7 +11,7 @@ public abstract class Snake {
   protected double curSpeed;
   protected double normalSpeed;
   protected ArrayList<SnakePart> hitbox;
-  protected int[] cellPos;
+  protected int[][] cellPos; // [{x,y} of frame][{x,y} of grid]
 
   protected BufferedImage[] headSprite;
   protected BufferedImage[] bodySprite;
@@ -27,11 +27,15 @@ public abstract class Snake {
   public Snake(GridMap gridMap) {
     normalSpeed = 2.4;
     curSpeed = normalSpeed;
-    cellPos = new int[2];
+    cellPos = new int[2][2];
   }
 
-  protected void getCellPos(int x, int y) {
-    cellPos = GridMap.getCellPos(x, y);
+  /**
+   * when resizing JFrame
+   */
+  protected void calibratePosition() {
+    x = GridMap.cellLayout[cellPos[1][1]][cellPos[1][0]][0];
+    y = GridMap.cellLayout[cellPos[1][1]][cellPos[1][0]][1];
   }
 
   /**

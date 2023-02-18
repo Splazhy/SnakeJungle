@@ -34,6 +34,8 @@ public class GraphicUI {
       case PLAYZONE:
         if(Main.isUpdatingFrameSize) {
           gridMap.update();
+          if(gp.player != null)
+            gp.player.calibratePosition();
           Main.isUpdatingFrameSize = false;
         }
         g2d.setColor(Color.WHITE);
@@ -41,12 +43,12 @@ public class GraphicUI {
         ,gridMap.offset[2], gridMap.offset[2], null);
         g2d.drawString(Arrays.toString(gridMap.offset),100,100); // debug
         if(gp.player != null) {
-          g2d.drawString(Arrays.toString(gp.player.cellPos),100,150); // debug
+          g2d.drawString(Arrays.toString(gp.player.cellPos[1]),100,150); // debug
           g2d.drawString(gp.player.toString(), 500, 500); // debug
           g2d.drawImage(gp.player.headSprite[gp.player.facing]
           ,gp.player.x, gp.player.y
-          ,gridMap.offset[2]/GridMap.cellsLength
-          ,gridMap.offset[2]/GridMap.cellsLength, null);
+          ,gridMap.offset[2]/GridMap.length
+          ,gridMap.offset[2]/GridMap.length, null);
           // TO-DO draw whole body (for loop maybe)
         }
         break;
