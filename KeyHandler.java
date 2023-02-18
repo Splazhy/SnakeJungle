@@ -49,30 +49,33 @@ public class KeyHandler implements KeyListener {
   public void keyReleased(KeyEvent e) {
     released = e.getExtendedKeyCode();
     // System.out.println("released: " + released);
-    if(GamePanel.state == STATE.MENU && released == KeyEvent.VK_ENTER) {
-      GamePanel.state = STATE.PLAYZONE;
-      GamePanel.isLoading = true;
-      gp.setBackground(Color.BLACK);
-    }
-    if(GamePanel.state == STATE.PLAYZONE) {
-      if(released == KeyEvent.VK_ESCAPE) {
-        GamePanel.state = STATE.MENU;
-        gp.player = null;
-        gp.setBackground(new ColorUIResource(24, 34, 40));
-      }
-      if(released == KeyEvent.VK_W) {
-        movementIsHeld[0] = false;
-      }
-      if(released == KeyEvent.VK_A) {
-        movementIsHeld[1] = false;
-      }
-      if(released == KeyEvent.VK_S) {
-        movementIsHeld[2] = false;
-      }
-      if(released == KeyEvent.VK_D) {
-        movementIsHeld[3] = false;
-      }
+    switch(GamePanel.state) {
+      case MENU:
+        if(released == KeyEvent.VK_ENTER) {
+          GamePanel.state = STATE.PLAYZONE;
+          GamePanel.isLoading = true;
+          gp.setBackground(Color.BLACK);
+        }
+        break;
+      case PLAYZONE:
+        if(released == KeyEvent.VK_ESCAPE) {
+          GamePanel.state = STATE.MENU;
+          gp.player = null;
+          gp.setBackground(new ColorUIResource(24, 34, 40));
+        }
+        if(released == KeyEvent.VK_W) {
+          movementIsHeld[0] = false;
+        }
+        if(released == KeyEvent.VK_A) {
+          movementIsHeld[1] = false;
+        }
+        if(released == KeyEvent.VK_S) {
+          movementIsHeld[2] = false;
+        }
+        if(released == KeyEvent.VK_D) {
+          movementIsHeld[3] = false;
+        }
+        break;
     }
   }
-  
 }

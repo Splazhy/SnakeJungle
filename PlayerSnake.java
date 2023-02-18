@@ -6,13 +6,18 @@ import javax.imageio.ImageIO;
 public class PlayerSnake extends Snake {
   private KeyHandler keyH;
   protected boolean isSprinting;
+  protected double sprintSpeed;
 
   public PlayerSnake(GridMap gridMap, KeyHandler keyH) {
     super(gridMap);
-    x = 328; y = 328;
+    normalSpeed = 4.0;
+    sprintSpeed = 4.7;
+    x = GridMap.cellPos[20][20][0];
+    y = GridMap.cellPos[20][20][1];
     facing = 3;
     this.keyH = keyH;
     isSprinting = false;
+    getCellPos(x, y);
     try {
       headSprite = new BufferedImage[4];
       headSprite[0] = ImageIO.read(new File("sprites/snake/playerhead_up.png"));
@@ -40,49 +45,42 @@ public class PlayerSnake extends Snake {
       curSpeed = normalSpeed;
     }
     if(keyH.movementIsHeld[0] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]) {
-      x /= 16;
-      x *= 16;
-      x += 8;
+      x = cellPos[0];
       facing = 0;
     }
     if(keyH.movementIsHeld[1] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]) {
-      y /= 16;
-      y *= 16;
-      y += 8;
+      y = cellPos[1];
       facing = 1;
     }
     if(keyH.movementIsHeld[2] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]) {
-      x /= 16;
-      x *= 16;
-      x += 8;
+      x = cellPos[0];
       facing = 2;
     }
     if(keyH.movementIsHeld[3] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]) {
-      y /= 16;
-      y *= 16;
-      y += 8;
+      y = cellPos[1];
       facing = 3;
     }
     switch(facing) {
       case 0:
-        if(y > 8)
-          y--; 
-        break;
+      if(y > GridMap.cellPos[0][0][1])
+        y--; 
+      break;
       case 1:
-        if(x > 8)
-          x--;
-        break;
+      if(x > GridMap.cellPos[0][0][0])
+        x--;
+      break;
       case 2:
-        if(y < Main.height-8)
-          y++;
-        break;
+      if(y < GridMap.cellPos[39][0][1])
+        y++;
+      break;
       case 3:
-        if(x < Main.width-8)
-          x++;
-        break;
+      if(x < GridMap.cellPos[0][39][0])
+        x++;
+      break;
     }
+    getCellPos(x, y);
   }
-
+  
   @Override
   public String toString() {
     return String.format("[%d,%d]",x,y);
