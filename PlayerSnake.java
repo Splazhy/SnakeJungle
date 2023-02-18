@@ -12,12 +12,12 @@ public class PlayerSnake extends Snake {
     super(gridMap);
     normalSpeed = 4.0;
     sprintSpeed = 4.7;
-    x = GridMap.cellPos[20][20][0];
-    y = GridMap.cellPos[20][20][1];
+    x = GridMap.cellLayout[20][10][0];
+    y = GridMap.cellLayout[20][10][1];
     facing = 3;
     this.keyH = keyH;
     isSprinting = false;
-    getCellPos(x, y);
+    cellPos = GridMap.getCellPos(x, y);
     try {
       headSprite = new BufferedImage[4];
       headSprite[0] = ImageIO.read(new File("sprites/snake/playerhead_up.png"));
@@ -45,40 +45,40 @@ public class PlayerSnake extends Snake {
       curSpeed = normalSpeed;
     }
     if(keyH.movementIsHeld[0] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]) {
-      x = cellPos[0];
+      x = cellPos[0][0];
       facing = 0;
     }
     if(keyH.movementIsHeld[1] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]) {
-      y = cellPos[1];
+      y = cellPos[0][1];
       facing = 1;
     }
     if(keyH.movementIsHeld[2] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]) {
-      x = cellPos[0];
+      x = cellPos[0][0];
       facing = 2;
     }
     if(keyH.movementIsHeld[3] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]) {
-      y = cellPos[1];
+      y = cellPos[0][1];
       facing = 3;
     }
     switch(facing) {
       case 0:
-      if(y > GridMap.cellPos[0][0][1])
+      if(y > GridMap.cellLayout[0][0][1])
         y--; 
       break;
       case 1:
-      if(x > GridMap.cellPos[0][0][0])
+      if(x > GridMap.cellLayout[0][0][0])
         x--;
       break;
       case 2:
-      if(y < GridMap.cellPos[39][0][1])
+      if(y < GridMap.cellLayout[39][0][1])
         y++;
       break;
       case 3:
-      if(x < GridMap.cellPos[0][39][0])
+      if(x < GridMap.cellLayout[0][39][0])
         x++;
       break;
     }
-    getCellPos(x, y);
+    cellPos = GridMap.getCellPos(x, y);
   }
   
   @Override
