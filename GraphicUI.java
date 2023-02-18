@@ -11,13 +11,10 @@ public class GraphicUI {
   private Font titleFont;
   private Font normalFont;
 
-  private GridMap gridMap;
-
   public GraphicUI(GamePanel gp) throws IOException {
     this.gp = gp;
     titleFont = new FontUIResource("Daydream", 0, 50);
     normalFont = new FontUIResource("W95FA", 0, 30);
-    gridMap = new GridMap();
   }
   
   public void drawUI(Graphics2D g2d) {
@@ -28,32 +25,74 @@ public class GraphicUI {
         g2d.drawString("Snake", getCenteredX("Snake", g2d), (Main.height/2)-80);
         g2d.drawString("Jungle", getCenteredX("Jungle", g2d), Main.height/2);
         g2d.setFont(normalFont);
-        g2d.drawString("press ENTER to play!"
-          ,getCenteredX("press ENTER to play!", g2d), (Main.height/2)+200);
+        g2d.drawString("press ↵ to play!"
+          ,getCenteredX("press ↵ to play!", g2d), Main.height-(Main.height/4));
         break;
-      case PLAYZONE:
+      case PAUSE:
         if(Main.isUpdatingFrameSize) {
-          gridMap.update();
-          if(gp.player != null)
+          if(gp.player != null) {
+            gp.gridMap.update();
             gp.player.calibratePosition();
+          }
           Main.isUpdatingFrameSize = false;
         }
         g2d.setColor(Color.WHITE);
-        g2d.drawImage(gridMap.img, gridMap.offset[0], gridMap.offset[1]
-        ,gridMap.offset[2], gridMap.offset[2], null);
-        g2d.drawString(Arrays.toString(gridMap.offset),100,100); // debug
+        g2d.setFont(normalFont);
+        g2d.drawImage(gp.gridMap.img, GridMap.offset[0], GridMap.offset[1]
+        ,GridMap.offset[2], GridMap.offset[2], null);
+        drawSnakeHead(g2d);
+        g2d.drawString("PAUSED", 40, Main.height/8);
+        g2d.drawString("[esc] continue game", 40, Main.height/8+40);
+        g2d.drawString("[↵] exit to title screen", 40, Main.height/8+80);
+        break;
+      case PLAYZONE:
+        if(Main.isUpdatingFrameSize) {
+          if(gp.player != null) {
+            gp.gridMap.update();
+            gp.player.calibratePosition();
+          }
+          Main.isUpdatingFrameSize = false;
+        }
+        g2d.setColor(Color.WHITE);
+        g2d.drawString(Arrays.toString(GridMap.offset),100, 100); // debug
         if(gp.player != null) {
-          g2d.drawString(Arrays.toString(gp.player.cellPos[1]),100,150); // debug
-          g2d.drawString(gp.player.toString(), 500, 500); // debug
-          g2d.drawImage(gp.player.headSprite[gp.player.facing]
-          ,gp.player.x, gp.player.y
-          ,gridMap.offset[2]/GridMap.length
-          ,gridMap.offset[2]/GridMap.length, null);
+          g2d.drawImage(gp.gridMap.img, GridMap.offset[0], GridMap.offset[1]
+          ,GridMap.offset[2], GridMap.offset[2], null);
+          g2d.drawString(Arrays.toString(gp.player.cellPos[1]),100, 150); // debug
+          g2d.drawString(gp.player.toString(), 100, 200); // debug
+          drawSnakeHead(g2d);
           // TO-DO draw whole body (for loop maybe)
         }
         break;
     }
     g2d.drawString(String.format("res:%dx%d",Main.width,Main.height), 100, 50); // debugging
+  }
+
+  /**
+   * draws in all adjacent directions
+   * @param g2d
+   */
+  private void drawSnakeHead(Graphics2D g2d) {
+    g2d.drawImage(gp.player.headSprite[gp.player.facing]
+      ,gp.player.x, gp.player.y
+      ,GridMap.offset[2]/GridMap.length
+      ,GridMap.offset[2]/GridMap.length, null);
+    g2d.drawImage(gp.player.headSprite[gp.player.facing]
+      ,gp.player.x-GridMap.offset[2], gp.player.y
+      ,GridMap.offset[2]/GridMap.length
+      ,GridMap.offset[2]/GridMap.length, null);
+    g2d.drawImage(gp.player.headSprite[gp.player.facing]
+      ,gp.player.x+GridMap.offset[2], gp.player.y
+      ,GridMap.offset[2]/GridMap.length
+      ,GridMap.offset[2]/GridMap.length, null);
+    g2d.drawImage(gp.player.headSprite[gp.player.facing]
+      ,gp.player.x, gp.player.y-GridMap.offset[2]
+      ,GridMap.offset[2]/GridMap.length
+      ,GridMap.offset[2]/GridMap.length, null);
+    g2d.drawImage(gp.player.headSprite[gp.player.facing]
+      ,gp.player.x, gp.player.y+GridMap.offset[2]
+      ,GridMap.offset[2]/GridMap.length
+      ,GridMap.offset[2]/GridMap.length, null);
   }
 
   /**

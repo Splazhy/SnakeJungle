@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 /**
@@ -6,11 +7,10 @@ import java.awt.image.BufferedImage;
  * @see PlayerSnake
  */
 public abstract class Snake {
-  protected int x;
-  protected int y;
+  protected int x, y;
   protected double curSpeed;
   protected double normalSpeed;
-  protected ArrayList<SnakePart> hitbox;
+  protected ArrayList<Rectangle> hitbox;
   protected int[][] cellPos; // [{x,y} of frame][{x,y} of grid]
 
   protected BufferedImage[] headSprite;
@@ -24,7 +24,7 @@ public abstract class Snake {
    */
   protected int facing;
 
-  public Snake(GridMap gridMap) {
+  public Snake() {
     normalSpeed = 2.4;
     curSpeed = normalSpeed;
     cellPos = new int[2][2];
