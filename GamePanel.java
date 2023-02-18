@@ -38,15 +38,13 @@ public class GamePanel extends JPanel implements Runnable {
   @Override
   public void run() {
     while(gameThread.isAlive()) {
-      if(state == STATE.PLAYZONE) {
-        if(isLoading) {
-          System.out.println("lesss go!");
-          gridMap = new GridMap();
-          player = new PlayerSnake(gridMap, keyH);
-          isLoading = false;
-        }
-        update();
+      if(isLoading) {
+        System.out.println("lesss go!");
+        gridMap = new GridMap();
+        player = new PlayerSnake(gridMap, keyH);
+        isLoading = false;
       }
+      update();
       repaint();
       if(player != null) {
         try {
@@ -55,6 +53,8 @@ public class GamePanel extends JPanel implements Runnable {
           e.printStackTrace();
         }
       }
+      if(Main.isUpdatingFrameSize)
+        updatePanel();
     }
   }
 
@@ -69,8 +69,20 @@ public class GamePanel extends JPanel implements Runnable {
     super.paintComponent(g);
     Graphics2D g2d = (Graphics2D)g;
 
+    if(gridMap != null)
+      gridMap.draw(g2d);
+    if(player != null)
+      player.draw(g2d);
     graphicUI.drawUI(g2d);
     
     g2d.dispose();
+  }
+
+  private void updatePanel() {
+    if(player != null && gridMap != null) {
+      gridMap.update();
+      player.calibratePosition();
+    }
+    Main.isUpdatingFrameSize = false;
   }
 }

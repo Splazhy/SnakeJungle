@@ -62,17 +62,17 @@ public class PlayerSnake extends Snake {
       facing = 3;
     }
     switch(facing) {
-      case 0:
-        y = (y > GridMap.offset[1]-GridMap.cellSize) ? --y : GridMap.offset[1]+GridMap.offset[2]-GridMap.cellSize;
+    case 0:
+      y = (y > GridMap.offset[1]-GridMap.cellSize) ? --y : GridMap.offset[1]+GridMap.size-GridMap.cellSize;
       break;
-      case 1:
-        x = (x > GridMap.offset[0]-GridMap.cellSize) ? --x : GridMap.offset[0]+GridMap.offset[2]-GridMap.cellSize;
+    case 1:
+      x = (x > GridMap.offset[0]-GridMap.cellSize) ? --x : GridMap.offset[0]+GridMap.size-GridMap.cellSize;
       break;
-      case 2:
-        y = (y < GridMap.offset[1]+GridMap.offset[2]-GridMap.cellSize) ? ++y : GridMap.offset[1]-GridMap.cellSize;
+    case 2:
+      y = (y < GridMap.offset[1]+GridMap.size-GridMap.cellSize) ? ++y : GridMap.offset[1]-GridMap.cellSize;
       break;
-      case 3:
-        x = (x < GridMap.offset[0]+GridMap.offset[2]-GridMap.cellSize) ? ++x : GridMap.offset[0]-GridMap.cellSize;
+    case 3:
+      x = (x < GridMap.offset[0]+GridMap.size-GridMap.cellSize) ? ++x : GridMap.offset[0]-GridMap.cellSize;
       break;
     }
     cellPos = GridMap.getCellPos(x, y);

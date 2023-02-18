@@ -34,5 +34,6 @@ public class Main extends JFrame {
 
   public static void main(String[] args) throws IOException {
     new Main();
+    System.out.println(System.getProperty("os.name"));
   }
 }
