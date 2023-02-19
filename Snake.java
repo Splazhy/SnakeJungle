@@ -13,7 +13,7 @@ public abstract class Snake {
   protected int headX, headY;
   protected double curSpeed;
   protected double normalSpeed;
-  protected ArrayList<SnakePart> snakeList;
+  protected ArrayList<SnakePart> snakeList; // TO-DO calculate pos in tick()
   protected int[][] cellPos; // [{x,y} of frame, {x,y} of grid]
   protected int facing;
   private static int spriteSize;
@@ -44,6 +44,7 @@ public abstract class Snake {
     snakeList.add(new SnakeTail(facing, snakeList.get(1), tailSprite));
   }
   protected abstract void loadSprite();
+  protected abstract void tick();
 
   /**
    * when resizing JFrame

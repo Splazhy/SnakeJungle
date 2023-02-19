@@ -40,7 +40,7 @@ public class GraphicUI {
       g2d.setFont(normalFont);
       g2d.drawString("PAUSED", 40, Main.height/8);
       g2d.drawString("[ESC] continue game", 40, Main.height/8+40);
-      g2d.drawString("[ENTER] exit to title screen", 40, Main.height/8+80);
+      g2d.drawString("[ENTER] to title screen", 40, Main.height/8+80);
       break;
 
     case PLAYZONE:
