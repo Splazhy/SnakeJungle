@@ -6,8 +6,7 @@ import java.awt.event.ComponentEvent;
 public class Main extends JFrame {
   protected static int width;
   protected static int height;
-  protected static boolean isUpdatingFrameSize;
-  protected GamePanel gamePanel;
+  private GamePanel gamePanel;
 
   public Main() throws IOException {
 
@@ -21,7 +20,7 @@ public class Main extends JFrame {
         height = getSize().height;
         if(GamePanel.state == STATE.PLAYZONE)
           GamePanel.state = STATE.PAUSE;
-        isUpdatingFrameSize = true;
+        gamePanel.updatePanel();
       }
     });
     setTitle("Snake Jungle (prototype)");

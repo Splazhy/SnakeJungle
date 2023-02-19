@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -7,7 +8,6 @@ import javax.swing.plaf.ColorUIResource;
 
 public class GamePanel extends JPanel implements Runnable {
   protected static STATE state;
-  protected static boolean isLoading;
   private KeyHandler keyH;
   private GraphicUI graphicUI;
   private Thread gameThread;
@@ -19,8 +19,6 @@ public class GamePanel extends JPanel implements Runnable {
     keyH = new KeyHandler(this);
     graphicUI = new GraphicUI(this);
 
-    isLoading = false; // true when ENTER is pressed on STATE.MENU
-
     setLayout(null);
     setPreferredSize(new Dimension(640, 640));
     setDoubleBuffered(true);
@@ -29,7 +27,7 @@ public class GamePanel extends JPanel implements Runnable {
     setFocusable(true);
   }
 
-  public void start() {
+  protected void start() {
     state = STATE.MENU;
     gameThread = new Thread(this);
     gameThread.start();
@@ -38,12 +36,6 @@ public class GamePanel extends JPanel implements Runnable {
   @Override
   public void run() {
     while(gameThread.isAlive()) {
-      if(isLoading) {
-        System.out.println("lesss go!");
-        gridMap = new GridMap();
-        player = new PlayerSnake(gridMap, keyH);
-        isLoading = false;
-      }
       update();
       repaint();
       if(player != null) {
@@ -53,12 +45,23 @@ public class GamePanel extends JPanel implements Runnable {
           e.printStackTrace();
         }
       }
-      if(Main.isUpdatingFrameSize)
-        updatePanel();
     }
   }
 
-  public void update() {
+  protected void load() {
+    // System.out.println("lesss go!"); // debug
+    gridMap = new GridMap();
+    player = new PlayerSnake(gridMap, keyH);
+    setBackground(Color.BLACK);
+  }
+
+  protected void unload() {
+    gridMap = null;
+    player = null;
+    setBackground(new ColorUIResource(24, 34, 40));
+  }
+
+  private void update() {
     if(state == STATE.PLAYZONE && player != null) {
       player.tick();
     }
@@ -78,11 +81,10 @@ public class GamePanel extends JPanel implements Runnable {
     g2d.dispose();
   }
 
-  private void updatePanel() {
+  protected void updatePanel() {
     if(player != null && gridMap != null) {
       gridMap.update();
       player.calibratePosition();
     }
-    Main.isUpdatingFrameSize = false;
   }
 }

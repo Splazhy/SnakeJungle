@@ -1,7 +1,5 @@
-import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import javax.swing.plaf.ColorUIResource;
 
 public class KeyHandler implements KeyListener {
   private GamePanel gp;
@@ -12,8 +10,8 @@ public class KeyHandler implements KeyListener {
    * <p> [0] : W [1] : A [2] : S [3] : D
    */
   protected boolean[] movementIsHeld;
-  protected int pressed;
-  protected int released;
+  private int pressed;
+  private int released;
 
   public KeyHandler(GamePanel gp) {
     this.gp = gp;
@@ -53,8 +51,7 @@ public class KeyHandler implements KeyListener {
     case MENU:
       if(released == KeyEvent.VK_ENTER) {
         GamePanel.state = STATE.PLAYZONE;
-        GamePanel.isLoading = true;
-        gp.setBackground(Color.BLACK);
+        gp.load();
       }
       break;
     case PAUSE:
@@ -62,9 +59,7 @@ public class KeyHandler implements KeyListener {
         GamePanel.state = STATE.PLAYZONE;
       } else if(released == KeyEvent.VK_ENTER) {
         GamePanel.state = STATE.MENU;
-        gp.gridMap = null;
-        gp.player = null;
-        gp.setBackground(new ColorUIResource(24, 34, 40));
+        gp.unload();
       }
       break;
     case PLAYZONE:

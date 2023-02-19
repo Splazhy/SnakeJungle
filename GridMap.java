@@ -14,7 +14,7 @@ public class GridMap {
    */
   protected static int[] offset;
   protected static int[][][] cellLayout; // [y][x]{x,y}
-  protected BufferedImage img;
+  private BufferedImage img;
 
   protected GridMap() {
     offset = new int[2];

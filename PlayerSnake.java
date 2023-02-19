@@ -4,8 +4,8 @@ import javax.imageio.ImageIO;
 
 public class PlayerSnake extends Snake {
   private KeyHandler keyH;
-  protected boolean isSprinting;
-  protected double sprintSpeed;
+  private boolean isSprinting;
+  private double sprintSpeed;
 
   public PlayerSnake(GridMap gridMap, KeyHandler keyH) {
     super();
