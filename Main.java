@@ -12,13 +12,15 @@ public class Main extends JFrame {
   public Main() throws IOException {
 
     gamePanel = new GamePanel();
-    
     add(gamePanel);
+    
     addComponentListener(new ComponentAdapter() {
       @Override
       public void componentResized(ComponentEvent e) {
         width = getSize().width;
         height = getSize().height;
+        if(GamePanel.state == STATE.PLAYZONE)
+          GamePanel.state = STATE.PAUSE;
         isUpdatingFrameSize = true;
       }
     });
