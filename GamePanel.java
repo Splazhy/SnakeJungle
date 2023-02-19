@@ -13,6 +13,7 @@ public class GamePanel extends JPanel implements Runnable {
   private GraphicUI graphicUI;
   private Thread gameThread;
 
+  protected Score playScore;
   protected PlayerSnake player;
 
   public GamePanel() throws IOException {

@@ -37,6 +37,7 @@ public class GraphicUI {
         }
         g2d.setColor(Color.WHITE);
         g2d.drawString(gp.player.toString(), 500, 500);
+        g2d.drawString(gp.playScore.toString(), 100, 100);
         break;
     }
   }
