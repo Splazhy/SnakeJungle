@@ -43,6 +43,9 @@ public class GamePanel extends JPanel implements Runnable {
       if(state == STATE.PLAYZONE) {
         if(isLoading) {
           System.out.println("lesss go!");
+
+          playScore = new Score(); // new playerScore
+
           try {
             player = new PlayerSnake(keyH);
           } catch (IOException e) {
@@ -67,6 +70,10 @@ public class GamePanel extends JPanel implements Runnable {
   public void update() {
     if(state == STATE.PLAYZONE && player != null) {
       player.tick();
+      /* test score
+        playScore.increaseScore(1); 
+        ** per tick **
+      */
     }
   }
 

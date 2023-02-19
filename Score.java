@@ -1,10 +1,11 @@
 
 public class Score {
-    public int score;
+    public int score = 0; // test 0 score
 
 
     public Score() {
-        score = 0;
+        /* init score */
+        score = 10;
     }
 
     public void increaseScore(int score){

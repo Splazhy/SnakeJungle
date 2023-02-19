@@ -1,10 +1,11 @@
-public class Apple extends Score {
+public class Apple {
     protected Score aScore;
 
-    public Apple () {
-        aScore.score = 10;
+    public Apple (int score) {
+        aScore.score = score;
     }
-    public void spawnApple() {
+    
+    public void spawnApple(int score) {
         
     }
 
