@@ -6,7 +6,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class GridMap {
-  protected final static int numOfGrid = 40;
+  protected final static int CELL_PER_ROW = 40;
   protected static int size;
   protected static int cellSize;
   /**
@@ -18,7 +18,7 @@ public class GridMap {
 
   protected GridMap() {
     offset = new int[2];
-    cellLayout = new int[numOfGrid][numOfGrid][2];
+    cellLayout = new int[CELL_PER_ROW][CELL_PER_ROW][2];
     update();
     try {
       img = ImageIO.read(new File("sprites/background/gridmap.png"));
@@ -43,10 +43,10 @@ public class GridMap {
     offset[0] = Main.width/2 - size/2;
     offset[1] = Main.height/2 - size/2;
     
-    int cellLeft = numOfGrid;
+    int cellLeft = CELL_PER_ROW;
     int areaTaken = 0;
     double area = size;
-    int[] cellArea = new int[numOfGrid];
+    int[] cellArea = new int[CELL_PER_ROW];
     
     for(int i = 0; i < cellArea.length; i++) {
       cellArea[i] = (int)Math.round((area - areaTaken) / cellLeft);
@@ -65,7 +65,7 @@ public class GridMap {
     }
     if(bcellSize == 0) // avoid divide by 0
       return;
-    double bRatio = (double)numOfGrid/bcellSizeCnt;
+    double bRatio = (double)CELL_PER_ROW/bcellSizeCnt;
     int idxToFill = 0;
     for(int i = 1; i <= bcellSizeCnt; i++) {
       while(idxToFill < Math.round(bRatio*i)-1) {
@@ -114,14 +114,14 @@ public class GridMap {
     if(cellX == 0) {
       cellX = (Math.abs(x-cellLayout[0][0][0])
         > Math.abs(x-(cellLayout[0][0][0]-cellSize))) ? 39 : 0;
-    } else if(cellX == numOfGrid-1) {
+    } else if(cellX == CELL_PER_ROW-1) {
       cellX = (Math.abs(x-cellLayout[0][39][0])
         > Math.abs(x-(cellLayout[0][39][0]+cellSize))) ? 0 : 39;
     }
     if(cellY == 0) {
       cellY = (Math.abs(y-cellLayout[0][0][1])
         > Math.abs(y-(cellLayout[0][0][1]-cellSize))) ? 39 : 0;
-    } else if(cellY == numOfGrid-1) {
+    } else if(cellY == CELL_PER_ROW-1) {
       cellY = (Math.abs(y-cellLayout[39][0][1])
         > Math.abs(y-(cellLayout[39][0][1]+cellSize))) ? 0 : 39;
     }
