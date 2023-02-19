@@ -29,13 +29,6 @@ public class GraphicUI {
       break;
 
     case PAUSE:
-      if(Main.isUpdatingFrameSize) {
-        if(gp.player != null) {
-          gp.gridMap.update();
-          gp.player.calibratePosition();
-        }
-        Main.isUpdatingFrameSize = false;
-      }
       g2d.setColor(Color.WHITE);
       g2d.setFont(normalFont);
       g2d.drawString("PAUSED", 40, Main.height/8);
