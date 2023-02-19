@@ -1,19 +1,26 @@
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics2D;
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import javax.swing.plaf.FontUIResource;
 
 public class GraphicUI {
   private GamePanel gp;
   private Font titleFont;
   private Font normalFont;
 
-  public GraphicUI(GamePanel gp) throws IOException {
+  public GraphicUI(GamePanel gp) {
     this.gp = gp;
-    titleFont = new FontUIResource("Daydream", 0, 50);
-    normalFont = new FontUIResource("W95FA", 0, 30);
+    try {
+      titleFont = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/DayDream.ttf")).deriveFont(50f);
+      normalFont = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/W95FA.otf")).deriveFont(30f);
+    } catch(IOException e) {
+      e.printStackTrace();
+    } catch (FontFormatException e) {
+      e.printStackTrace();
+    }
   }
   
   public void drawUI(Graphics2D g2d) {
@@ -24,16 +31,16 @@ public class GraphicUI {
       g2d.drawString("Snake", getCenteredX("Snake", g2d), (Main.height/2)-80);
       g2d.drawString("Jungle", getCenteredX("Jungle", g2d), Main.height/2);
       g2d.setFont(normalFont);
-      g2d.drawString("press ↵ to play!"
-      ,getCenteredX("press ↵ to play!", g2d), Main.height-(Main.height/4));
+      g2d.drawString("press ENTER to play!"
+      ,getCenteredX("press ENTER to play!", g2d), Main.height-(Main.height/4));
       break;
 
     case PAUSE:
       g2d.setColor(Color.WHITE);
       g2d.setFont(normalFont);
       g2d.drawString("PAUSED", 40, Main.height/8);
-      g2d.drawString("[esc] continue game", 40, Main.height/8+40);
-      g2d.drawString("[↵] exit to title screen", 40, Main.height/8+80);
+      g2d.drawString("[ESC] continue game", 40, Main.height/8+40);
+      g2d.drawString("[ENTER] exit to title screen", 40, Main.height/8+80);
       break;
 
     case PLAYZONE:
