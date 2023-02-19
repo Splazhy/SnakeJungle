@@ -32,7 +32,7 @@ public abstract class Snake {
     normalSpeed = 2.4;
     curSpeed = normalSpeed;
     cellPos = new int[2][2];
-    spriteSize = GridMap.size/GridMap.numOfGrid;
+    spriteSize = GridMap.size/GridMap.CELL_PER_ROW;
     facing = 3;
     headSprite = new BufferedImage[4];
     bodySprite = new BufferedImage[6];
@@ -52,7 +52,7 @@ public abstract class Snake {
   protected void calibratePosition() {
     headX = GridMap.cellLayout[cellPos[1][1]][cellPos[1][0]][0];
     headY = GridMap.cellLayout[cellPos[1][1]][cellPos[1][0]][1];
-    spriteSize = GridMap.size/GridMap.numOfGrid;
+    spriteSize = GridMap.size/GridMap.CELL_PER_ROW;
   }
 
   protected void draw(Graphics2D g2d) {

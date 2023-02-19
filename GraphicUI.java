@@ -23,7 +23,7 @@ public class GraphicUI {
     }
   }
   
-  public void drawUI(Graphics2D g2d) {
+  protected void drawUI(Graphics2D g2d) {
     switch(GamePanel.state) {
     case MENU:
       g2d.setColor(Color.ORANGE);
