@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.plaf.ColorUIResource;
 
 public class GamePanel extends JPanel implements Runnable {
-  protected static STATE state;
+  protected static State state;
   private KeyHandler keyH;
   private GraphicUI graphicUI;
   private Thread gameThread;
@@ -28,7 +28,7 @@ public class GamePanel extends JPanel implements Runnable {
   }
 
   protected void start() {
-    state = STATE.MENU;
+    state = State.MENU;
     gameThread = new Thread(this);
     gameThread.start();
   }
@@ -62,7 +62,7 @@ public class GamePanel extends JPanel implements Runnable {
   }
 
   private void update() {
-    if(state == STATE.PLAYZONE && player != null) {
+    if(state == State.PLAYZONE && player != null) {
       player.tick();
     }
   }
