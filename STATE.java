@@ -1,7 +1,7 @@
 /**
  * Define state of this program
 */
-public enum STATE {
+public enum State {
   MENU,
   PLAYZONE,
   PAUSE

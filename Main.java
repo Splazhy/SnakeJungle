@@ -18,8 +18,8 @@ public class Main extends JFrame {
       public void componentResized(ComponentEvent e) {
         width = getSize().width;
         height = getSize().height;
-        if(GamePanel.state == STATE.PLAYZONE)
-          GamePanel.state = STATE.PAUSE;
+        if(GamePanel.state == State.PLAYZONE)
+          GamePanel.state = State.PAUSE;
         gamePanel.updatePanel();
       }
     });
