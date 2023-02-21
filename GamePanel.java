@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.io.IOException;
@@ -70,21 +71,25 @@ public class GamePanel extends JPanel implements Runnable {
   @Override
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
-    Graphics2D g2d = (Graphics2D)g;
+    BufferedImage gridImage = new BufferedImage(640, 640, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D scaledg2d = (Graphics2D)g;
+    Graphics2D g2d = gridImage.createGraphics();
 
-    if(gridMap != null)
+    if(gridMap != null && player != null) {
       gridMap.draw(g2d);
-    if(player != null)
       player.draw(g2d);
-    graphicUI.drawUI(g2d);
+      scaledg2d.drawImage(gridImage,GridMap.offset[0],GridMap.offset[1],GridMap.size,GridMap.size,null);
+    }
     
+    graphicUI.drawUI(scaledg2d);
+
     g2d.dispose();
+    scaledg2d.dispose();
   }
 
   protected void updatePanel() {
     if(player != null && gridMap != null) {
       gridMap.update();
-      player.calibratePosition();
     }
   }
 }

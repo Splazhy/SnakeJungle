@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -14,25 +16,23 @@ public abstract class Snake {
   protected double curSpeed;
   protected double normalSpeed;
   protected ArrayList<SnakePart> snakeList; // TO-DO calculate pos in tick()
-  protected int[][] cellPos; // [{x,y} of frame, {x,y} of grid]
-  protected int facing;
-  private static int spriteSize;
-
-  protected BufferedImage[] headSprite;
-  protected BufferedImage[] bodySprite;
-  protected BufferedImage[] tailSprite;
+  protected int[][] cellPos; // [{x,y} of frame, {x,y} of grid] of head
   /**
    * 0 for UP <p>
    * 1 for LEFT <p>
    * 2 for DOWN <p>
    * 3 for RIGHT <p>
    */
+  protected int facing;
+
+  protected BufferedImage[] headSprite;
+  protected BufferedImage[] bodySprite;
+  protected BufferedImage[] tailSprite;
 
   public Snake() {
     normalSpeed = 2.4;
     curSpeed = normalSpeed;
     cellPos = new int[2][2];
-    spriteSize = GridMap.size/GridMap.CELL_PER_ROW;
     facing = 3;
     headSprite = new BufferedImage[4];
     bodySprite = new BufferedImage[6];
@@ -40,19 +40,18 @@ public abstract class Snake {
     loadSprite();
     snakeList = new ArrayList<>();
     snakeList.add(new SnakeHead(facing, headSprite));
-    snakeList.add(new SnakeBody(facing, snakeList.get(0), bodySprite));
-    snakeList.add(new SnakeTail(facing, snakeList.get(1), tailSprite));
+    for(int i = 0; i < 100; i++)
+      snakeList.add(new SnakeBody(facing, snakeList.get(i), bodySprite));
+    snakeList.add(new SnakeTail(facing, snakeList.get(snakeList.size()-1), tailSprite));
   }
-  protected abstract void loadSprite();
-  protected abstract void tick();
 
-  /**
-   * when resizing JFrame
-   */
-  protected void calibratePosition() {
-    headX = GridMap.cellLayout[cellPos[1][1]][cellPos[1][0]][0];
-    headY = GridMap.cellLayout[cellPos[1][1]][cellPos[1][0]][1];
-    spriteSize = GridMap.size/GridMap.CELL_PER_ROW;
+  protected abstract void loadSprite();
+
+  protected void tick() {
+    for(int i = 0; i < snakeList.size(); i++) {
+      snakeList.get(i).tick();
+    }
+    cellPos = GridMap.getCellPos(headX, headY);
   }
 
   protected void draw(Graphics2D g2d) {
@@ -60,23 +59,27 @@ public abstract class Snake {
       snakeList.get(i).draw(g2d);
     }
   }
-
-  private int getFacing() {
-    return facing;
-  }
+  
   /**
    * HEAD, BODY, TAIL
    */
   private abstract class SnakePart {
-    protected int facing;
-    protected int pos;
+    protected int x, y;
+    protected int subfacing;
+    protected int moveData;
     protected SnakePart followee;
+    protected Deque<Integer> moveQueue;
 
     private SnakePart(int facing, SnakePart followee) {
-      this.facing = facing;
+      x = headX; y = headY;
+      subfacing = facing;
       this.followee = followee;
+      moveQueue = new LinkedList<>();
     }
+
+    protected abstract void tick();
     protected abstract void draw(Graphics2D g2d);
+
   }
 
   private class SnakeHead extends SnakePart {
@@ -86,24 +89,41 @@ public abstract class Snake {
       super(facing, null);
       sprite = spriteArr;
     }
+
+    @Override
+    protected void tick() {
+      switch(facing) {
+      case 0:
+        headY = (headY > 0) ? --headY : 640;
+        break;
+      case 1:
+        headX = (headX > 0) ? --headX : 640;
+        break;
+      case 2:
+        headY = (headY < 640) ? ++headY : 0;
+        break;
+      case 3:
+        headX = (headX < 640) ? ++headX : 0;
+        break;
+      }
+      moveData = facing*1000000 + headX*1000 + headY;
+      // System.out.println(moveData); // debug
+      moveQueue.addLast(moveData);
+    }
+
+    @Override
     protected void draw(Graphics2D g2d) {
-      facing = getFacing();
-      g2d.setClip(GridMap.offset[0], GridMap.offset[1], GridMap.size, GridMap.size);
-      g2d.drawImage(sprite[facing], headX, headY, spriteSize, spriteSize, null);
 
-      g2d.drawImage(sprite[facing], headX-GridMap.size, headY
-      ,spriteSize, spriteSize, null);
+      g2d.drawImage(sprite[facing], headX, headY, null);
 
-      g2d.drawImage(sprite[facing], headX+GridMap.size, headY
-      ,spriteSize, spriteSize, null);
+      g2d.drawImage(sprite[facing], headX-GridMap.GRID_PIXELS, headY, null);
 
-      g2d.drawImage(sprite[facing], headX, headY-GridMap.size
-      ,spriteSize, spriteSize, null);
+      g2d.drawImage(sprite[facing], headX+GridMap.GRID_PIXELS, headY, null);
 
-      g2d.drawImage(sprite[facing], headX, headY+GridMap.size
-      ,spriteSize, spriteSize, null);
+      g2d.drawImage(sprite[facing], headX, headY-GridMap.GRID_PIXELS, null);
 
-      g2d.setClip(null);
+      g2d.drawImage(sprite[facing], headX, headY+GridMap.GRID_PIXELS, null);
+
     }
   }
 
@@ -113,15 +133,36 @@ public abstract class Snake {
     private SnakeBody(int facing, SnakePart followee, BufferedImage[] spriteArr) {
       super(facing, followee);
       sprite = spriteArr;
+      for(int i = 0; i < 16; i++)
+        moveQueue.add(-1);
     }
+
+    @Override
+    protected void tick() {
+      moveData = moveQueue.peekFirst();
+      System.out.println(moveData);
+      
+      if(moveData != -1) {
+        subfacing = moveData / 1000000;
+        x = moveData / 1000 % 1000;
+        y = moveData % 1000;
+      }
+      moveQueue.addLast(followee.moveQueue.pollFirst());
+    }
+
     @Override
     protected void draw(Graphics2D g2d) {
 
-      g2d.setClip(GridMap.offset[0], GridMap.offset[1], GridMap.size, GridMap.size);
-      
-      // help
+      g2d.drawImage(sprite[subfacing%2], x, y, null);
 
-      g2d.setClip(null);
+      g2d.drawImage(sprite[subfacing%2], x-GridMap.GRID_PIXELS, y, null);
+
+      g2d.drawImage(sprite[subfacing%2], x+GridMap.GRID_PIXELS, y, null);
+
+      g2d.drawImage(sprite[subfacing%2], x, y-GridMap.GRID_PIXELS, null);
+
+      g2d.drawImage(sprite[subfacing%2], x, y+GridMap.GRID_PIXELS, null);
+
     }
   }
 
@@ -131,15 +172,35 @@ public abstract class Snake {
     private SnakeTail(int facing, SnakePart followee, BufferedImage[] spriteArr) {
       super(facing, followee);
       sprite = spriteArr;
+      for(int i = 0; i < 16; i++)
+        moveQueue.add(-1);
     }
+
+    @Override
+    protected void tick() {
+      moveData = moveQueue.pollFirst();
+      
+      if(moveData != -1) {
+        subfacing = moveData / 1000000;
+        x = moveData / 1000 % 1000;
+        y = moveData % 1000;
+      }
+      moveQueue.addLast(followee.moveQueue.pollFirst());
+    }
+
     @Override
     protected void draw(Graphics2D g2d) {
-      
-      g2d.setClip(GridMap.offset[0], GridMap.offset[1], GridMap.size, GridMap.size);
 
-      // help
+      g2d.drawImage(sprite[subfacing], x, y, null);
 
-      g2d.setClip(null);
+      g2d.drawImage(sprite[subfacing], x-GridMap.GRID_PIXELS, y, null);
+
+      g2d.drawImage(sprite[subfacing], x+GridMap.GRID_PIXELS, y, null);
+
+      g2d.drawImage(sprite[subfacing], x, y-GridMap.GRID_PIXELS, null);
+
+      g2d.drawImage(sprite[subfacing], x, y+GridMap.GRID_PIXELS, null);
+
     }
   }
 }

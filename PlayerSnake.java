@@ -12,8 +12,6 @@ public class PlayerSnake extends Snake {
     normalSpeed = 4.0;
     // normalSpeed = 1.0; // debug
     sprintSpeed = 4.7;
-    headX = GridMap.cellLayout[20][10][0];
-    headY = GridMap.cellLayout[20][10][1];
     facing = 3;
     this.keyH = keyH;
     isSprinting = false;
@@ -32,7 +30,7 @@ public class PlayerSnake extends Snake {
       curSpeed = normalSpeed;
     }
     if(keyH.movementIsHeld[0] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]) {
-      headX= cellPos[0][0];
+      headX = cellPos[0][0];
       facing = 0;
     }
     if(keyH.movementIsHeld[1] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]) {
@@ -47,25 +45,13 @@ public class PlayerSnake extends Snake {
       headY = cellPos[0][1];
       facing = 3;
     }
-    switch(facing) {
-    case 0:
-      headY = (headY > GridMap.offset[1]-GridMap.cellSize) ? --headY : GridMap.offset[1]+GridMap.size-GridMap.cellSize;
-      break;
-    case 1:
-      headX = (headX > GridMap.offset[0]-GridMap.cellSize) ? --headX : GridMap.offset[0]+GridMap.size-GridMap.cellSize;
-      break;
-    case 2:
-      headY = (headY < GridMap.offset[1]+GridMap.size-GridMap.cellSize) ? ++headY : GridMap.offset[1]-GridMap.cellSize;
-      break;
-    case 3:
-      headX = (headX < GridMap.offset[0]+GridMap.size-GridMap.cellSize) ? ++headX : GridMap.offset[0]-GridMap.cellSize;
-      break;
-    }
-    cellPos = GridMap.getCellPos(headX, headY);
+    super.tick();
   }
   
   @Override
   protected void loadSprite() {
+    headX = GridMap.cellLayout[20][10][0];
+    headY = GridMap.cellLayout[20][10][1];
     try {
       headSprite[0] = ImageIO.read(new File("sprites/snake/playerhead_up.png"));
       headSprite[1] = ImageIO.read(new File("sprites/snake/playerhead_left.png"));

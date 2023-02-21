@@ -6,9 +6,9 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class GridMap {
+  protected final static int GRID_PIXELS = 640;
   protected final static int CELL_PER_ROW = 40;
   protected static int size;
-  protected static int cellSize;
   /**
    * top-left offset
    */
@@ -20,6 +20,12 @@ public class GridMap {
     offset = new int[2];
     cellLayout = new int[CELL_PER_ROW][CELL_PER_ROW][2];
     update();
+    for(int i = 0; i < CELL_PER_ROW; i++) {
+      for(int j = 0; j < CELL_PER_ROW; j++) {
+        cellLayout[i][j][0] = j*16;
+        cellLayout[i][j][1] = i*16;
+      }
+    }
     try {
       img = ImageIO.read(new File("sprites/background/gridmap.png"));
     } catch(IOException e) {
@@ -28,7 +34,7 @@ public class GridMap {
   }
 
   protected void draw(Graphics2D g2d) {
-    g2d.drawImage(img, offset[0], offset[1], size, size, null);
+    g2d.drawImage(img, 0, 0, null);
   }
 
   /**
@@ -43,50 +49,6 @@ public class GridMap {
     offset[0] = Main.width/2 - size/2;
     offset[1] = Main.height/2 - size/2;
     
-    int cellLeft = CELL_PER_ROW;
-    int areaTaken = 0;
-    double area = size;
-    int[] cellArea = new int[CELL_PER_ROW];
-    
-    for(int i = 0; i < cellArea.length; i++) {
-      cellArea[i] = (int)Math.round((area - areaTaken) / cellLeft);
-      areaTaken += cellArea[i];
-      cellLeft--;
-    }
-
-    cellSize = cellArea[0];
-    int bcellSize = 0;
-    int bcellSizeCnt = 0;
-    for(int i = 1; i < cellArea.length; i++) {
-      if(cellArea[i] != cellSize) {
-        bcellSize = cellArea[i];
-        bcellSizeCnt++;
-      }
-    }
-    if(bcellSize == 0) // avoid divide by 0
-      return;
-    double bRatio = (double)CELL_PER_ROW/bcellSizeCnt;
-    int idxToFill = 0;
-    for(int i = 1; i <= bcellSizeCnt; i++) {
-      while(idxToFill < Math.round(bRatio*i)-1) {
-        cellArea[idxToFill] = cellSize;
-        idxToFill++;
-      }
-      cellArea[(int)Math.round(bRatio*i)-1] = bcellSize;
-      idxToFill++;
-    }
-
-    int posY = offset[1];
-    for(int i = 0; i < cellLayout.length; i++) {
-      int posX = offset[0];
-      for(int j = 0; j < cellLayout[i].length; j++) {
-        cellLayout[i][j][0] = posX;
-        cellLayout[i][j][1] = posY;
-        posX += cellArea[j];
-      }
-      posY += cellArea[i];
-      cellLeft--;
-    }
     // System.out.println(Arrays.toString(cellArea)); // debug
   }
 
@@ -113,17 +75,17 @@ public class GridMap {
     }
     if(cellX == 0) {
       cellX = (Math.abs(x-cellLayout[0][0][0])
-        > Math.abs(x-(cellLayout[0][0][0]-cellSize))) ? 39 : 0;
+        > Math.abs(x-(cellLayout[0][0][0]-16))) ? 39 : 0;
     } else if(cellX == CELL_PER_ROW-1) {
       cellX = (Math.abs(x-cellLayout[0][39][0])
-        > Math.abs(x-(cellLayout[0][39][0]+cellSize))) ? 0 : 39;
+        > Math.abs(x-(cellLayout[0][39][0]+16))) ? 0 : 39;
     }
     if(cellY == 0) {
       cellY = (Math.abs(y-cellLayout[0][0][1])
-        > Math.abs(y-(cellLayout[0][0][1]-cellSize))) ? 39 : 0;
+        > Math.abs(y-(cellLayout[0][0][1]-16))) ? 39 : 0;
     } else if(cellY == CELL_PER_ROW-1) {
       cellY = (Math.abs(y-cellLayout[39][0][1])
-        > Math.abs(y-(cellLayout[39][0][1]+cellSize))) ? 0 : 39;
+        > Math.abs(y-(cellLayout[39][0][1]+16))) ? 0 : 39;
     }
     return new int[][] {cellLayout[cellY][cellX], {cellX, cellY}};
   }
