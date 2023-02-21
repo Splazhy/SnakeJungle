@@ -1,17 +1,17 @@
-import java.awt.event.*;
-import javax.swing.plaf.ColorUIResource;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
   private GamePanel gp;
   /**
    * An array keeping track of WASD keys.
-   * {@code true} if the key is held,
+   * {@code true} if the key is held;
    * {@code false} otherwise.
    * <p> [0] : W [1] : A [2] : S [3] : D
    */
   protected boolean[] movementIsHeld;
-  protected int pressed;
-  protected int released;
+  private int pressed;
+  private int released;
 
   public KeyHandler(GamePanel gp) {
     this.gp = gp;
@@ -27,7 +27,7 @@ public class KeyHandler implements KeyListener {
   public void keyPressed(KeyEvent e) {
     pressed = e.getExtendedKeyCode();
     // System.out.println("pressed: " + pressed);
-    if(GamePanel.state == STATE.PLAYZONE && gp.player != null) {
+    if(GamePanel.state == State.PLAYZONE && gp.player != null) {
       if(pressed == KeyEvent.VK_W && gp.player.facing != 2) {
         movementIsHeld[0] = true;
       }
@@ -47,16 +47,24 @@ public class KeyHandler implements KeyListener {
   public void keyReleased(KeyEvent e) {
     released = e.getExtendedKeyCode();
     // System.out.println("released: " + released);
-    if(GamePanel.state == STATE.MENU && released == KeyEvent.VK_ENTER) {
-      GamePanel.state = STATE.PLAYZONE;
-      GamePanel.isLoading = true;
-      gp.setBackground(new ColorUIResource(130, 134, 64));
-    }
-    if(GamePanel.state == STATE.PLAYZONE) {
+    switch(GamePanel.state) {
+    case MENU:
+      if(released == KeyEvent.VK_ENTER) {
+        GamePanel.state = State.PLAYZONE;
+        gp.load();
+      }
+      break;
+    case PAUSE:
       if(released == KeyEvent.VK_ESCAPE) {
-        GamePanel.state = STATE.MENU;
-        gp.player = null;
-        gp.setBackground(new ColorUIResource(24, 34, 40));
+        GamePanel.state = State.PLAYZONE;
+      } else if(released == KeyEvent.VK_ENTER) {
+        GamePanel.state = State.MENU;
+        gp.unload();
+      }
+      break;
+    case PLAYZONE:
+      if(released == KeyEvent.VK_ESCAPE) {
+        GamePanel.state = State.PAUSE;
       }
       if(released == KeyEvent.VK_W) {
         movementIsHeld[0] = false;
@@ -70,7 +78,7 @@ public class KeyHandler implements KeyListener {
       if(released == KeyEvent.VK_D) {
         movementIsHeld[3] = false;
       }
+      break;
     }
   }
-  
 }

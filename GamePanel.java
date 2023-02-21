@@ -1,37 +1,34 @@
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.io.IOException;
-
-import javax.swing.*;
+import javax.swing.JPanel;
 import javax.swing.plaf.ColorUIResource;
 
 public class GamePanel extends JPanel implements Runnable {
-  public static STATE state;
-  protected static int sizeX;
-  protected static int sizeY;
-  protected static boolean isLoading;
+  protected static State state;
   private KeyHandler keyH;
   private GraphicUI graphicUI;
   private Thread gameThread;
 
+  protected GridMap gridMap;
   protected PlayerSnake player;
 
   public GamePanel() throws IOException {
     keyH = new KeyHandler(this);
     graphicUI = new GraphicUI(this);
 
-    sizeX = 640; sizeY = 640; // change sizes here
-    isLoading = false; // true when ENTER is pressed on STATE.MENU
-
-    this.setLayout(null);
-    this.setPreferredSize(new Dimension(sizeX,sizeY));
-    this.setDoubleBuffered(true);
-    this.setBackground(new ColorUIResource(24, 34, 40));
-    this.addKeyListener(keyH);
-    this.setFocusable(true);
+    setLayout(null);
+    setPreferredSize(new Dimension(640, 640));
+    setDoubleBuffered(true);
+    setBackground(new ColorUIResource(24, 34, 40));
+    addKeyListener(keyH);
+    setFocusable(true);
   }
 
-  public void start() {
-    state = STATE.MENU;
+  protected void start() {
+    state = State.MENU;
     gameThread = new Thread(this);
     gameThread.start();
   }
@@ -39,23 +36,11 @@ public class GamePanel extends JPanel implements Runnable {
   @Override
   public void run() {
     while(gameThread.isAlive()) {
-      if(state == STATE.PLAYZONE) {
-        if(isLoading) {
-          System.out.println("lesss go!");
-          try {
-            player = new PlayerSnake(keyH);
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-
-          isLoading = false;
-        }
-        update();
-      }
+      update();
       repaint();
       if(player != null) {
         try {
-          Thread.sleep((int)(1.02*(11-player.speed)));
+          Thread.sleep(Math.round(21*(-Math.log(player.curSpeed)/Math.log(2))+50));
         } catch(InterruptedException e) {
           e.printStackTrace();
         }
@@ -63,19 +48,43 @@ public class GamePanel extends JPanel implements Runnable {
     }
   }
 
-  public void update() {
-    if(state == STATE.PLAYZONE && player != null) {
+  protected void load() {
+    // System.out.println("lesss go!"); // debug
+    gridMap = new GridMap();
+    player = new PlayerSnake(gridMap, keyH);
+    setBackground(Color.BLACK);
+  }
+
+  protected void unload() {
+    gridMap = null;
+    player = null;
+    setBackground(new ColorUIResource(24, 34, 40));
+  }
+
+  private void update() {
+    if(state == State.PLAYZONE && player != null) {
       player.tick();
     }
   }
 
   @Override
-  public void paint(Graphics g) {
+  public void paintComponent(Graphics g) {
     super.paintComponent(g);
     Graphics2D g2d = (Graphics2D)g;
 
+    if(gridMap != null)
+      gridMap.draw(g2d);
+    if(player != null)
+      player.draw(g2d);
     graphicUI.drawUI(g2d);
     
     g2d.dispose();
+  }
+
+  protected void updatePanel() {
+    if(player != null && gridMap != null) {
+      gridMap.update();
+      player.calibratePosition();
+    }
   }
 }
