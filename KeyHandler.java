@@ -27,7 +27,7 @@ public class KeyHandler implements KeyListener {
   public void keyPressed(KeyEvent e) {
     pressed = e.getExtendedKeyCode();
     // System.out.println("pressed: " + pressed);
-    if(GamePanel.state == State.PLAYZONE && gp.player != null) {
+    if(GamePanel.state == State.PLAYZONE) {
       if(pressed == KeyEvent.VK_W && gp.player.facing != 2) {
         movementIsHeld[0] = true;
       }
@@ -53,7 +53,6 @@ public class KeyHandler implements KeyListener {
     switch(GamePanel.state) {
     case MENU:
       if(released == KeyEvent.VK_ENTER) {
-        GamePanel.state = State.PLAYZONE;
         gp.load();
       }
       break;
@@ -61,7 +60,6 @@ public class KeyHandler implements KeyListener {
       if(released == KeyEvent.VK_ESCAPE) {
         GamePanel.state = State.PLAYZONE;
       } else if(released == KeyEvent.VK_ENTER) {
-        GamePanel.state = State.MENU;
         gp.unload();
       }
       break;
