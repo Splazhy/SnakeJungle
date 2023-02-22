@@ -75,7 +75,7 @@ public class GamePanel extends JPanel implements Runnable {
     Graphics2D scaledg2d = (Graphics2D)g;
     Graphics2D g2d = gridImage.createGraphics();
 
-    if(gridMap != null && player != null) {
+    if(state != State.MENU && gridMap != null && player != null) {
       gridMap.draw(g2d);
       player.draw(g2d);
       scaledg2d.drawImage(gridImage,GridMap.offset[0],GridMap.offset[1],GridMap.size,GridMap.size,null);

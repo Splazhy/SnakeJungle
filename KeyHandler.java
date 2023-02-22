@@ -40,6 +40,9 @@ public class KeyHandler implements KeyListener {
       if(pressed == KeyEvent.VK_D && gp.player.facing != 1) {
         movementIsHeld[3] = true;
       }
+      if(pressed == KeyEvent.VK_SEMICOLON) {
+        gp.player.grow(1);
+      }
     }
   }
 

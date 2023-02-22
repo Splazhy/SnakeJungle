@@ -37,14 +37,12 @@ public abstract class Snake {
     headSprite = new BufferedImage[4];
     bodySprite = new BufferedImage[6];
     tailSprite = new BufferedImage[4];
-    loadSprite();
     snakeList = new ArrayList<>();
-    snakeList.add(new SnakeHead(facing, headSprite));
-    for(int i = 0; i < 100; i++)
-      snakeList.add(new SnakeBody(facing, snakeList.get(i), bodySprite));
-    snakeList.add(new SnakeTail(facing, snakeList.get(snakeList.size()-1), tailSprite));
+    loadSprite();
+    initSnake();
   }
 
+  protected abstract void initSnake();
   protected abstract void loadSprite();
 
   protected void tick() {
@@ -59,19 +57,33 @@ public abstract class Snake {
       snakeList.get(i).draw(g2d);
     }
   }
+
+  protected void grow(int n) {
+    // TO-DO
+    for(int i = 0; i < n; i++) {
+      SnakeBody body = new SnakeBody(snakeList.get(snakeList.size()-2).x
+      , snakeList.get(snakeList.size()-2).y
+      , snakeList.get(snakeList.size()-2).subfacing
+      , snakeList.get(snakeList.size()-2), bodySprite);
+      snakeList.add(snakeList.size()-1,body);
+      snakeList.get(snakeList.size()-1).followee = body;
+      for(int j = 0; j < 16; j++)
+        snakeList.get(snakeList.size()-1).moveQueue.addFirst(-1);
+    }
+  }
   
   /**
    * HEAD, BODY, TAIL
    */
-  private abstract class SnakePart {
+  protected abstract class SnakePart {
     protected int x, y;
     protected int subfacing;
     protected int moveData;
     protected SnakePart followee;
     protected Deque<Integer> moveQueue;
 
-    private SnakePart(int facing, SnakePart followee) {
-      x = headX; y = headY;
+    protected SnakePart(int x, int y, int facing, SnakePart followee) {
+      this.x = x; this.y = y;
       subfacing = facing;
       this.followee = followee;
       moveQueue = new LinkedList<>();
@@ -82,11 +94,11 @@ public abstract class Snake {
 
   }
 
-  private class SnakeHead extends SnakePart {
+  protected class SnakeHead extends SnakePart {
     private BufferedImage[] sprite;
 
-    private SnakeHead(int facing, BufferedImage[] spriteArr) {
-      super(facing, null);
+    protected SnakeHead(int facing, BufferedImage[] spriteArr) {
+      super(headX, headY, facing, null);
       sprite = spriteArr;
     }
 
@@ -106,8 +118,8 @@ public abstract class Snake {
         headX = (headX < 640) ? ++headX : 0;
         break;
       }
+      x = headX; y = headY;
       moveData = facing*1000000 + headX*1000 + headY;
-      // System.out.println(moveData); // debug
       moveQueue.addLast(moveData);
     }
 
@@ -127,11 +139,11 @@ public abstract class Snake {
     }
   }
 
-  private class SnakeBody extends SnakePart {
+  protected class SnakeBody extends SnakePart {
     private BufferedImage[] sprite;
 
-    private SnakeBody(int facing, SnakePart followee, BufferedImage[] spriteArr) {
-      super(facing, followee);
+    protected SnakeBody(int x, int y, int facing, SnakePart followee, BufferedImage[] spriteArr) {
+      super(x, y, facing, followee);
       sprite = spriteArr;
       for(int i = 0; i < 16; i++)
         moveQueue.add(-1);
@@ -139,9 +151,7 @@ public abstract class Snake {
 
     @Override
     protected void tick() {
-      moveData = moveQueue.peekFirst();
-      System.out.println(moveData);
-      
+      moveData = moveQueue.peekFirst();      
       if(moveData != -1) {
         subfacing = moveData / 1000000;
         x = moveData / 1000 % 1000;
@@ -166,11 +176,11 @@ public abstract class Snake {
     }
   }
 
-  private class SnakeTail extends SnakePart {
+  protected class SnakeTail extends SnakePart {
     private BufferedImage[] sprite;
 
-    private SnakeTail(int facing, SnakePart followee, BufferedImage[] spriteArr) {
-      super(facing, followee);
+    protected SnakeTail(int x, int y, int facing, SnakePart followee, BufferedImage[] spriteArr) {
+      super(x, y, facing, followee);
       sprite = spriteArr;
       for(int i = 0; i < 16; i++)
         moveQueue.add(-1);
@@ -178,6 +188,10 @@ public abstract class Snake {
 
     @Override
     protected void tick() {
+      if(moveQueue.size() > 16 && moveQueue.peekLast() == -1) {
+        moveQueue.pollLast();
+      }
+      moveQueue.addLast(followee.moveQueue.pollFirst());
       moveData = moveQueue.pollFirst();
       
       if(moveData != -1) {
@@ -185,7 +199,6 @@ public abstract class Snake {
         x = moveData / 1000 % 1000;
         y = moveData % 1000;
       }
-      moveQueue.addLast(followee.moveQueue.pollFirst());
     }
 
     @Override

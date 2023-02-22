@@ -18,6 +18,7 @@ public class PlayerSnake extends Snake {
     cellPos = GridMap.getCellPos(headX, headY);
   }
 
+  @Override
   public void tick() {
     if(keyH.movementIsHeld[facing]) {
       isSprinting = true;
@@ -49,9 +50,16 @@ public class PlayerSnake extends Snake {
   }
   
   @Override
-  protected void loadSprite() {
+  protected void initSnake() {
     headX = GridMap.cellLayout[20][10][0];
     headY = GridMap.cellLayout[20][10][1];
+    snakeList.add(new SnakeHead(facing, headSprite));
+    for(int i = 0; i < 0; i++)
+      snakeList.add(new SnakeBody(headX, headY, facing, snakeList.get(i), bodySprite));
+    snakeList.add(new SnakeTail(headX, headY, facing, snakeList.get(snakeList.size()-1), tailSprite));
+  }
+  @Override
+  protected void loadSprite() {
     try {
       headSprite[0] = ImageIO.read(new File("sprites/snake/playerhead_up.png"));
       headSprite[1] = ImageIO.read(new File("sprites/snake/playerhead_left.png"));
