@@ -5,18 +5,40 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 /**
- * Snake in this game moves progressively, not cell-by-cell.
+ * Snake in this game moves pixel-by-pixel, not cell-by-cell.<p>
+ * งูในเกมนี้ขยับทีละ pixel ไม่ใช่ทีละช่อง
  * @see PlayerSnake
  */
 public abstract class Snake {
   /**
-   * Head position (top-left point)
+   * Head position (top-left point)<p>
+   * ตำแหน่งซ้ายบนของหัวงู
    */
   protected int headX, headY;
-  protected double curSpeed;
-  protected double normalSpeed;
-  protected ArrayList<SnakePart> snakeList; // TO-DO calculate pos in tick()
+  /**
+   * ความเฉื่อย ณ ปัจจุบัน
+   */
+  protected int curInertia;
+  /**
+   * ความเฉื่อยปกติ
+   */
+  protected int normalInertia;
+  /**
+   * act as a snake ID 1 is player, others are bots<p>
+   * ประเภทของงู โดย 1 คืองูผู้เล่น [2-n] คืองูบอท
+   */
+  protected int snakeType;
+  protected int tickInterval;
+  /**
+   * 
+   */
+  protected ArrayList<SnakePart> snakeList;
+  /**
+   * GridMap cell coordinates<p>
+   * พิกัดช่องบน GridMap 
+   */
   protected int[][] cellPos; // [{x,y} of frame, {x,y} of grid] of head
+  protected int[][] prevCellPos;
   /**
    * 0 for UP <p>
    * 1 for LEFT <p>
@@ -29,9 +51,10 @@ public abstract class Snake {
   protected BufferedImage[] bodySprite;
   protected BufferedImage[] tailSprite;
 
-  public Snake() {
-    normalSpeed = 2.4;
-    curSpeed = normalSpeed;
+  public Snake(int snakeType) {
+    this.snakeType = snakeType;
+    normalInertia = 10;
+    curInertia = normalInertia;
     cellPos = new int[2][2];
     facing = 3;
     headSprite = new BufferedImage[4];
@@ -71,6 +94,11 @@ public abstract class Snake {
         snakeList.get(snakeList.size()-1).moveQueue.addFirst(-1);
     }
   }
+
+  protected boolean isAtInterval() {
+    tickInterval %= curInertia;
+    return tickInterval == 0;
+  }
   
   /**
    * HEAD, BODY, TAIL
@@ -106,16 +134,20 @@ public abstract class Snake {
     protected void tick() {
       switch(facing) {
       case 0:
+        headX = cellPos[0][0];
         headY = (headY > 0) ? --headY : 640;
         break;
       case 1:
         headX = (headX > 0) ? --headX : 640;
+        headY = cellPos[0][1];
         break;
       case 2:
+        headX = cellPos[0][0];
         headY = (headY < 640) ? ++headY : 0;
         break;
       case 3:
         headX = (headX < 640) ? ++headX : 0;
+        headY = cellPos[0][1];
         break;
       }
       x = headX; y = headY;
@@ -151,7 +183,7 @@ public abstract class Snake {
 
     @Override
     protected void tick() {
-      moveData = moveQueue.peekFirst();      
+      moveData = moveQueue.peekFirst();
       if(moveData != -1) {
         subfacing = moveData / 1000000;
         x = moveData / 1000 % 1000;

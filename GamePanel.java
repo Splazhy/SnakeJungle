@@ -12,6 +12,7 @@ public class GamePanel extends JPanel implements Runnable {
   private KeyHandler keyH;
   private GraphicUI graphicUI;
   private Thread gameThread;
+  private static final int FPS = 1200;
 
   protected GridMap gridMap;
   protected PlayerSnake player;
@@ -36,16 +37,25 @@ public class GamePanel extends JPanel implements Runnable {
   
   @Override
   public void run() {
+
+    double tickInterval = 1000000000 / FPS;
+    double deltaTime = 0;
+    long lastTime = System.nanoTime();
+    long curTime;
+
     while(gameThread.isAlive()) {
-      update();
-      repaint();
-      if(state == State.PLAYZONE) {
-        try {
-          Thread.sleep(Math.round(21*(-Math.log(player.curSpeed)/Math.log(2))+50));
-        } catch(InterruptedException e) {
-          e.printStackTrace();
-        }
+
+      curTime = System.nanoTime();
+      deltaTime += (curTime - lastTime) / tickInterval;
+
+      if(deltaTime >= 1) {
+        update();
+        deltaTime--;
       }
+      repaint();
+
+      lastTime = curTime;
+
     }
   }
 
@@ -67,6 +77,7 @@ public class GamePanel extends JPanel implements Runnable {
   private void update() {
     if(state == State.PLAYZONE) {
       player.tick();
+      // .tick()
     }
   }
 
