@@ -46,7 +46,7 @@ public class GraphicUI {
     case PLAYZONE:
       g2d.setColor(Color.WHITE);
       if(GamePanel.state == State.PLAYZONE) {
-        g2d.drawString(Arrays.toString(gp.player.cellPos[1]),100, 150); // debug
+        g2d.drawString(Arrays.toString(GridMap.cellLayout[gp.player.headCellPos[0]][gp.player.headCellPos[1]]),100, 150); // debug
         g2d.drawString(gp.player.toString(), 100, 200); // debug
         // draws gameplay UI here
       }

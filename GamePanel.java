@@ -4,6 +4,9 @@ import java.awt.image.BufferedImage;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.swing.JPanel;
 import javax.swing.plaf.ColorUIResource;
 
@@ -12,14 +15,15 @@ public class GamePanel extends JPanel implements Runnable {
   private KeyHandler keyH;
   private GraphicUI graphicUI;
   private Thread gameThread;
-  private static final int FPS = 1200;
 
+  protected static List<GameHitbox> hitboxList;
   protected GridMap gridMap;
   protected PlayerSnake player;
 
   public GamePanel() throws IOException {
     keyH = new KeyHandler(this);
     graphicUI = new GraphicUI(this);
+    hitboxList = new LinkedList<>();
 
     setLayout(null);
     setPreferredSize(new Dimension(640, 640));
@@ -38,24 +42,14 @@ public class GamePanel extends JPanel implements Runnable {
   @Override
   public void run() {
 
-    double tickInterval = 1000000000 / FPS;
-    double deltaTime = 0;
-    long lastTime = System.nanoTime();
-    long curTime;
-
     while(gameThread.isAlive()) {
-
-      curTime = System.nanoTime();
-      deltaTime += (curTime - lastTime) / tickInterval;
-
-      if(deltaTime >= 1) {
-        update();
-        deltaTime--;
-      }
+      update();
       repaint();
-
-      lastTime = curTime;
-
+      try {
+        Thread.sleep(6,0);
+      } catch(InterruptedException e) {
+        e.printStackTrace();
+      }
     }
   }
 
@@ -70,14 +64,17 @@ public class GamePanel extends JPanel implements Runnable {
   protected void unload() {
     gridMap = null;
     player = null;
+    hitboxList.clear();
     setBackground(new ColorUIResource(24, 34, 40));
     state = State.MENU;
   }
 
   private void update() {
     if(state == State.PLAYZONE) {
-      player.tick();
-      // .tick()
+      if(player.isAlive)
+        player.tick();
+      else
+        unload();
     }
   }
 
@@ -91,6 +88,10 @@ public class GamePanel extends JPanel implements Runnable {
     if(state != State.MENU) {
       gridMap.draw(g2d);
       player.draw(g2d);
+      for(GameHitbox r : hitboxList) // debug
+        g2d.draw(r);
+
+      /* draws the whole game grid image */
       scaledg2d.drawImage(gridImage,GridMap.offset[0],GridMap.offset[1],GridMap.size,GridMap.size,null);
     }
     

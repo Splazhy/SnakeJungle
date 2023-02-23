@@ -4,53 +4,65 @@ import javax.imageio.ImageIO;
 
 public class PlayerSnake extends Snake {
   private KeyHandler keyH;
-  private int sprintInertia;
+  private int sprintSpeed;
+  /**
+   * keeping player from spamming
+   */
+  private int[] markCellPos;
 
   public PlayerSnake(GridMap gridMap, KeyHandler keyH) {
     super(1);
-    normalInertia = 10;
-    // normalInertia = 0.0000001; // debug
-    sprintInertia = 5;
+    normalSpeed = 1;
+    // normalSpeed = 0.0000001; // debug
+    sprintSpeed = 1;
     facing = 3;
     this.keyH = keyH;
-    cellPos = GridMap.getCellPos(headX, headY);
+    markCellPos = new int[2];
   }
 
   @Override
   public void tick() {
-    tickInterval++;
-    if(isAtInterval()) {
-      if(keyH.movementIsHeld[facing]) {
-        curInertia = sprintInertia;
-      } else {
-        curInertia = normalInertia;
-      }
-      if(keyH.movementIsHeld[0] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]) {
-        facing = 0;
-      }
-      if(keyH.movementIsHeld[1] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]) {
-        headY = cellPos[0][1];
-        facing = 1;
-      }
-      if(keyH.movementIsHeld[2] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]) {
-        headX = cellPos[0][0];
-        facing = 2;
-      }
-      if(keyH.movementIsHeld[3] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]) {
-        headY = cellPos[0][1];
-        facing = 3;
-      }
-      super.tick();
+    if(keyH.movementIsHeld[facing]) {
+      curSpeed = sprintSpeed;
+    } else {
+      curSpeed = normalSpeed;
     }
+    if(markCellPos[0] != headCellPos[0] || markCellPos[1] != headCellPos[1]) {
+      if(keyH.movementIsHeld[0] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]
+      && facing != 2 && facing != 0) {
+        facing = 0;
+        markCellPos[0] = headCellPos[0];
+        markCellPos[1] = headCellPos[1];
+      }
+      if(keyH.movementIsHeld[1] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]
+      && facing != 3 && facing != 1) {
+        facing = 1;
+        markCellPos[0] = headCellPos[0];
+        markCellPos[1] = headCellPos[1];
+      }
+      if(keyH.movementIsHeld[2] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]
+      && facing != 0 && facing != 2) {
+        facing = 2;
+        markCellPos[0] = headCellPos[0];
+        markCellPos[1] = headCellPos[1];
+      }
+      if(keyH.movementIsHeld[3] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]
+      && facing != 1 && facing != 3) {
+        facing = 3;
+        markCellPos[0] = headCellPos[0];
+        markCellPos[1] = headCellPos[1];
+      }
+    }
+    super.tick();
   }
   
   @Override
   protected void initSnake() {
-    headX = GridMap.cellLayout[7][8][0];
-    headY = GridMap.cellLayout[7][8][1];
+    headX = GridMap.cellLayout[10][20][0];
+    headY = GridMap.cellLayout[10][20][1];
     snakeList.add(new SnakeHead(facing, headSprite));
-    snakeList.add(new SnakeTail(headX, headY, facing, snakeList.get(snakeList.size()-1), tailSprite));
-    grow(1);
+    snakeList.add(new SnakeBody(headX-16, headY, facing, snakeList.get(snakeList.size()-1), bodySprite));
+    snakeList.add(new SnakeTail(headX-32, headY, facing, snakeList.get(snakeList.size()-1), tailSprite));
   }
   @Override
   protected void loadSprite() {
