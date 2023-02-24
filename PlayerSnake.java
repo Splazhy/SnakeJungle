@@ -29,15 +29,12 @@ public class PlayerSnake extends Snake {
         facing = 0;
       }
       if(keyH.movementIsHeld[1] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]) {
-        headY = cellPos[0][1];
         facing = 1;
       }
       if(keyH.movementIsHeld[2] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]) {
-        headX = cellPos[0][0];
         facing = 2;
       }
       if(keyH.movementIsHeld[3] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]) {
-        headY = cellPos[0][1];
         facing = 3;
       }
       super.tick();
