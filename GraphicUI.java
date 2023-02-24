@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
+import javax.swing.plaf.ColorUIResource;
+
 public class GraphicUI {
   private GamePanel gp;
   private Font titleFont;
@@ -45,12 +47,18 @@ public class GraphicUI {
 
     case PLAYZONE:
       g2d.setColor(Color.WHITE);
-      if(GamePanel.state == State.PLAYZONE) {
-        g2d.drawString(Arrays.toString(gp.player.cellPos[1]),100, 150); // debug
-        g2d.drawString(gp.player.toString(), 100, 200); // debug
-        // draws gameplay UI here
-      }
+      g2d.drawString(Arrays.toString(GridMap.cellLayout[gp.player.headCellPos[0]][gp.player.headCellPos[1]]),100, 150); // debug
+      g2d.drawString(gp.player.toString(), 100, 200); // debug
+
+      // draws gameplay UI here
+
       g2d.drawString(Arrays.toString(GridMap.offset),100, 100); // debug
+      break;
+    
+    case GAMEOVER:
+      g2d.setFont(normalFont);
+      g2d.setColor(new ColorUIResource(190, 68, 55));
+      g2d.drawString("GAME OVER", getCenteredX("GAME OVER", g2d), Main.height/2);
       break;
     }
     g2d.drawString(String.format("res:%dx%d",Main.width,Main.height), 100, 50); // debugging

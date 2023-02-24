@@ -1,57 +1,59 @@
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-public class PlayerSnake extends Snake {
-  private KeyHandler keyH;
-  private int sprintSpeed;
-  /**
-   * keeping player from spamming
-   */
-  private int[] markCellPos;
+public class BotSquigglySnake extends Snake {
 
-  public PlayerSnake(GridMap gridMap, KeyHandler keyH) {
-    super(1);
+  private int[] markCellPos;
+  private static boolean isDown;
+  private Random rnd;
+  private int randomDist;
+
+  public BotSquigglySnake(GridMap gridMap) {
+    super(2);
     normalSpeed = 1;
     // normalSpeed = 0.0000001; // debug
-    sprintSpeed = 1;
     facing = 3;
-    this.keyH = keyH;
     markCellPos = new int[2];
+    markCellPos[0] = headCellPos[0]; // test
+    markCellPos[1] = headCellPos[1]; // test
+    rnd = new Random(); // test
+    randomDist = rnd.nextInt(10)+3;
   }
 
   @Override
   public void tick() {
-    if(keyH.movementIsHeld[facing]) {
-      curSpeed = sprintSpeed;
-    } else {
-      curSpeed = normalSpeed;
-    }
+    /* AI TEST */
+    int xDist = Math.abs(markCellPos[0]-headCellPos[0]);
+    int yDist = Math.abs(markCellPos[1]-headCellPos[1]);
     if(markCellPos[0] != headCellPos[0] || markCellPos[1] != headCellPos[1]) {
-      if(keyH.movementIsHeld[0] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]
-      && facing != 2 && facing != 0) {
-        facing = 0;
-        markCellPos[0] = headCellPos[0];
-        markCellPos[1] = headCellPos[1];
-      }
-      if(keyH.movementIsHeld[1] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]
-      && facing != 3 && facing != 1) {
-        facing = 1;
-        markCellPos[0] = headCellPos[0];
-        markCellPos[1] = headCellPos[1];
-      }
-      if(keyH.movementIsHeld[2] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]
-      && facing != 0 && facing != 2) {
-        facing = 2;
-        markCellPos[0] = headCellPos[0];
-        markCellPos[1] = headCellPos[1];
-      }
-      if(keyH.movementIsHeld[3] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]
-      && facing != 1 && facing != 3) {
-        facing = 3;
-        markCellPos[0] = headCellPos[0];
-        markCellPos[1] = headCellPos[1];
+      switch(facing) {
+      case 0:
+        if(yDist >= randomDist) {
+          facing = 3;
+          markCellPos[0] = headCellPos[0];
+          markCellPos[1] = headCellPos[1];
+          isDown = true;
+        }
+        break;
+      case 2:
+        if(yDist >= randomDist) {
+          facing = 3;
+          markCellPos[0] = headCellPos[0];
+          markCellPos[1] = headCellPos[1];
+          isDown = false;
+        }
+        break;
+      case 3:
+        if(xDist >= 1) {
+          facing = (isDown) ? 2 : 0;
+          markCellPos[0] = headCellPos[0];
+          markCellPos[1] = headCellPos[1];
+          randomDist = rnd.nextInt(10)+3;
+        }
+        break;
       }
     }
     super.tick();
@@ -59,11 +61,12 @@ public class PlayerSnake extends Snake {
   
   @Override
   protected void initSnake() {
-    headX = GridMap.cellLayout[10][20][0];
-    headY = GridMap.cellLayout[10][20][1];
+    headX = GridMap.cellLayout[20][20][0];
+    headY = GridMap.cellLayout[20][20][1];
     snakeList.add(new SnakeHead(facing, headSprite));
     snakeList.add(new SnakeBody(headX-16, headY, facing, snakeList.get(snakeList.size()-1), bodySprite));
     snakeList.add(new SnakeTail(headX-32, headY, facing, snakeList.get(snakeList.size()-1), tailSprite));
+    grow(30);
   }
   @Override
   protected void loadSprite() {

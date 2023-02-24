@@ -4,6 +4,7 @@
 public enum State {
   MENU,
   PLAYZONE,
-  PAUSE
+  PAUSE,
+  GAMEOVER
   // SETTINGS
 }
