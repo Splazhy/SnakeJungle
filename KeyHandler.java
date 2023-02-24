@@ -42,11 +42,12 @@ public class KeyHandler implements KeyListener {
     switch(GamePanel.state) {
     case MENU: break;
     case PLAYZONE:
-      if(pressed == KeyEvent.VK_SEMICOLON) {
-        gp.player.grow(1);
+      if(pressed == KeyEvent.VK_SEMICOLON) { // debug
+        gp.player.grow(5);
       }
       break;
     case PAUSE: break;
+    case GAMEOVER: break;
     }
   }
 
@@ -72,7 +73,13 @@ public class KeyHandler implements KeyListener {
         GamePanel.state = State.PAUSE;
       }
       break;
-    }
+    case GAMEOVER:
+      if(released == KeyEvent.VK_ESCAPE) {
+        gp.unload();
+      } else if(released == KeyEvent.VK_ENTER) {
+        gp.load();
+      }
+    } // end of switch
     if(released == KeyEvent.VK_W) {
       movementIsHeld[0] = false;
     }

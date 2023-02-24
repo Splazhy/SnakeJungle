@@ -17,6 +17,7 @@ public class GamePanel extends JPanel implements Runnable {
   private Thread gameThread;
 
   protected static List<GameHitbox> hitboxList;
+  protected static List<Snake> botList;
   protected GridMap gridMap;
   protected PlayerSnake player;
 
@@ -24,6 +25,7 @@ public class GamePanel extends JPanel implements Runnable {
     keyH = new KeyHandler(this);
     graphicUI = new GraphicUI(this);
     hitboxList = new LinkedList<>();
+    botList = new LinkedList<>();
 
     setLayout(null);
     setPreferredSize(new Dimension(640, 640));
@@ -46,7 +48,7 @@ public class GamePanel extends JPanel implements Runnable {
       update();
       repaint();
       try {
-        Thread.sleep(6,0);
+        Thread.sleep(10,0);
       } catch(InterruptedException e) {
         e.printStackTrace();
       }
@@ -57,6 +59,7 @@ public class GamePanel extends JPanel implements Runnable {
     // System.out.println("lesss go!"); // debug
     gridMap = new GridMap();
     player = new PlayerSnake(gridMap, keyH);
+    botList.add(new BotSquigglySnake(gridMap));
     setBackground(Color.BLACK);
     state = State.PLAYZONE;
   }
@@ -65,16 +68,24 @@ public class GamePanel extends JPanel implements Runnable {
     gridMap = null;
     player = null;
     hitboxList.clear();
+    botList.clear();
     setBackground(new ColorUIResource(24, 34, 40));
     state = State.MENU;
   }
 
   private void update() {
     if(state == State.PLAYZONE) {
-      if(player.isAlive)
+      if(player.isAlive) {
         player.tick();
-      else
-        unload();
+        for(Snake s : botList) {
+          s.tick();
+        }
+      }
+      else {
+        hitboxList.clear();
+        botList.clear();
+        state = State.GAMEOVER;
+      }
     }
   }
 
@@ -88,6 +99,9 @@ public class GamePanel extends JPanel implements Runnable {
     if(state != State.MENU) {
       gridMap.draw(g2d);
       player.draw(g2d);
+      for(Snake s : botList)
+        s.draw(g2d);
+      g2d.setColor(Color.RED);
       for(GameHitbox r : hitboxList) // debug
         g2d.draw(r);
 

@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -19,11 +20,13 @@ public abstract class Snake {
   protected int headX, headY;
   protected int curSpeed;
   protected int normalSpeed;
+  private static boolean isChecking;
   protected boolean isAlive;
   /**
    * 
    */
   protected ArrayList<SnakePart> snakeList;
+  private List<GameHitbox> snakeHitbox;
   /**
    * GridMap cell coordinates<p>
    * พิกัดช่องบน GridMap 
@@ -52,6 +55,7 @@ public abstract class Snake {
     bodySprite = new BufferedImage[6];
     tailSprite = new BufferedImage[4];
     snakeList = new ArrayList<>();
+    snakeHitbox = new LinkedList<>();
     loadSprite();
     initSnake();
     headCellPos = GridMap.getCellPos(headX, headY);
@@ -61,6 +65,10 @@ public abstract class Snake {
   protected abstract void loadSprite();
 
   protected void tick() {
+    if(!isAlive) {
+      GamePanel.hitboxList.removeAll(snakeHitbox);
+      GamePanel.botList.remove(this);
+    }
     for(int i = 0; i < snakeList.size(); i++) {
       snakeList.get(i).tick();
     }
@@ -73,7 +81,6 @@ public abstract class Snake {
   }
 
   protected void grow(int n) {
-    // TO-DO
     for(int i = 0; i < n; i++) {
       SnakeBody body = new SnakeBody(snakeList.get(snakeList.size()-2).x
       , snakeList.get(snakeList.size()-2).y
@@ -107,7 +114,9 @@ public abstract class Snake {
       cellPos = new int[2];
       this.followee = followee;
       moveQueue = new LinkedList<>();
-      hitbox = new GameHitbox(x+2,y+2,10,10, ID);
+      hitbox = new GameHitbox(x+4,y+4,6,6, ID);
+      while(isChecking);
+      snakeHitbox.add(hitbox);
       GamePanel.hitboxList.add(hitbox);
     }
 
@@ -121,7 +130,12 @@ public abstract class Snake {
 
     protected SnakeHead(int facing, BufferedImage[] spriteArr) {
       super(headX, headY, facing, null);
-      hitbox.setFrame(headX+10, headY+2, 4, 10);
+      switch(facing) {
+        case 0: hitbox.setFrame(headX+5, headY, 4, 4); break;
+        case 1: hitbox.setFrame(headX, headY+5, 4, 4); break;
+        case 2: hitbox.setFrame(headX+5, headY+10, 4, 4); break;
+        case 3: hitbox.setFrame(headX+10, headY+5, 4, 4); break;
+      }
       sprite = spriteArr;
     }
 
@@ -152,12 +166,13 @@ public abstract class Snake {
         case 1: hitbox.setFrame(headX, headY+5, 4, 4); break;
         case 2: hitbox.setFrame(headX+5, headY+10, 4, 4); break;
         case 3: hitbox.setFrame(headX+10, headY+5, 4, 4); break;
-
       }
+      isChecking = true;
       for(GameHitbox r : GamePanel.hitboxList) {
         if(!r.equals(hitbox) && hitbox.intersects(r.getBounds2D()) && r.ID > 0)
           isAlive = false;
       }
+      isChecking = false;
       moveData = facing*1000000 + headX*1000 + headY;
       moveQueue.addLast(moveData);
     }
