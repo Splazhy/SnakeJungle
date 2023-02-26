@@ -5,7 +5,7 @@ import javax.imageio.ImageIO;
 
 public class PlayerSnake extends Snake {
   private KeyHandler keyH;
-  private int sprintSpeed;
+  private double sprintSpeed;
   /**
    * keeping player from spamming
    */
@@ -13,9 +13,9 @@ public class PlayerSnake extends Snake {
 
   public PlayerSnake(GridMap gridMap, KeyHandler keyH) {
     super(1);
-    normalSpeed = 1;
+    normalSpeed = 4.0;
     // normalSpeed = 0.0000001; // debug
-    sprintSpeed = 1;
+    sprintSpeed = 4.7;
     facing = 3;
     this.keyH = keyH;
     markCellPos = new int[2];

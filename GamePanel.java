@@ -47,11 +47,12 @@ public class GamePanel extends JPanel implements Runnable {
     while(gameThread.isAlive()) {
       update();
       repaint();
-      try {
-        Thread.sleep(10,0);
-      } catch(InterruptedException e) {
-        e.printStackTrace();
-      }
+      if(state == State.PLAYZONE)
+        try {
+          Thread.sleep(Math.round(21*(-Math.log(player.curSpeed)/Math.log(2))+50));
+        } catch(InterruptedException e) {
+          e.printStackTrace();
+        }
     }
   }
 
@@ -116,6 +117,7 @@ public class GamePanel extends JPanel implements Runnable {
   }
 
   protected void updatePanel() {
-    gridMap.update();
+    if(gridMap != null)
+      gridMap.update();
   }
 }
