@@ -49,6 +49,8 @@ public class GraphicUI {
         g2d.drawString(Arrays.toString(gp.player.cellPos[1]),100, 150); // debug
         g2d.drawString(gp.player.toString(), 100, 200); // debug
         // draws gameplay UI here
+        g2d.drawString(Score.MAX_SCORE(), 100, 280);
+        g2d.drawString(Score.CUR_SCORE(), 100, 320);
       }
       g2d.drawString(Arrays.toString(GridMap.offset),100, 100); // debug
       break;
