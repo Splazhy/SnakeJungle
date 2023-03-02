@@ -27,19 +27,27 @@ public class KeyHandler implements KeyListener {
   public void keyPressed(KeyEvent e) {
     pressed = e.getExtendedKeyCode();
     // System.out.println("pressed: " + pressed);
-    if(GamePanel.state == State.PLAYZONE && gp.player != null) {
-      if(pressed == KeyEvent.VK_W && gp.player.facing != 2) {
-        movementIsHeld[0] = true;
+    if(pressed == KeyEvent.VK_W) {
+      movementIsHeld[0] = true;
+    }
+    if(pressed == KeyEvent.VK_A) {
+      movementIsHeld[1] = true;
+    }
+    if(pressed == KeyEvent.VK_S) {
+      movementIsHeld[2] = true;
+    }
+    if(pressed == KeyEvent.VK_D) {
+      movementIsHeld[3] = true;
+    }
+    switch(GamePanel.state) {
+    case MENU: break;
+    case PLAYZONE:
+      if(pressed == KeyEvent.VK_SEMICOLON) { // debug
+        gp.player.grow(5);
       }
-      if(pressed == KeyEvent.VK_A && gp.player.facing != 3) {
-        movementIsHeld[1] = true;
-      }
-      if(pressed == KeyEvent.VK_S && gp.player.facing != 0) {
-        movementIsHeld[2] = true;
-      }
-      if(pressed == KeyEvent.VK_D && gp.player.facing != 1) {
-        movementIsHeld[3] = true;
-      }
+      break;
+    case PAUSE: break;
+    case GAMEOVER: break;
     }
   }
 
@@ -50,7 +58,6 @@ public class KeyHandler implements KeyListener {
     switch(GamePanel.state) {
     case MENU:
       if(released == KeyEvent.VK_ENTER) {
-        GamePanel.state = State.PLAYZONE;
         gp.load();
       }
       break;
@@ -58,7 +65,6 @@ public class KeyHandler implements KeyListener {
       if(released == KeyEvent.VK_ESCAPE) {
         GamePanel.state = State.PLAYZONE;
       } else if(released == KeyEvent.VK_ENTER) {
-        GamePanel.state = State.MENU;
         gp.unload();
       }
       break;
@@ -66,19 +72,25 @@ public class KeyHandler implements KeyListener {
       if(released == KeyEvent.VK_ESCAPE) {
         GamePanel.state = State.PAUSE;
       }
-      if(released == KeyEvent.VK_W) {
-        movementIsHeld[0] = false;
-      }
-      if(released == KeyEvent.VK_A) {
-        movementIsHeld[1] = false;
-      }
-      if(released == KeyEvent.VK_S) {
-        movementIsHeld[2] = false;
-      }
-      if(released == KeyEvent.VK_D) {
-        movementIsHeld[3] = false;
-      }
       break;
+    case GAMEOVER:
+      if(released == KeyEvent.VK_ESCAPE) {
+        gp.unload();
+      } else if(released == KeyEvent.VK_ENTER) {
+        gp.load();
+      }
+    } // end of switch
+    if(released == KeyEvent.VK_W) {
+      movementIsHeld[0] = false;
+    }
+    if(released == KeyEvent.VK_A) {
+      movementIsHeld[1] = false;
+    }
+    if(released == KeyEvent.VK_S) {
+      movementIsHeld[2] = false;
+    }
+    if(released == KeyEvent.VK_D) {
+      movementIsHeld[3] = false;
     }
   }
 }
