@@ -20,7 +20,7 @@ public class GamePanel extends JPanel implements Runnable {
   protected static List<Snake> botList;
   protected GridMap gridMap;
   protected PlayerSnake player;
-
+  protected Apple apple;
   public GamePanel() throws IOException {
     keyH = new KeyHandler(this);
     graphicUI = new GraphicUI(this);
@@ -60,7 +60,11 @@ public class GamePanel extends JPanel implements Runnable {
     // System.out.println("lesss go!"); // debug
     gridMap = new GridMap();
     player = new PlayerSnake(gridMap, keyH);
+
+    apple = new Apple(gridMap);
+
     botList.add(new BotSquigglySnake(gridMap));
+
     setBackground(Color.BLACK);
     state = State.PLAYZONE;
   }
@@ -68,8 +72,12 @@ public class GamePanel extends JPanel implements Runnable {
   protected void unload() {
     gridMap = null;
     player = null;
+
+    apple = null;
+
     hitboxList.clear();
     botList.clear();
+
     setBackground(new ColorUIResource(24, 34, 40));
     state = State.MENU;
   }
@@ -78,6 +86,7 @@ public class GamePanel extends JPanel implements Runnable {
     if(state == State.PLAYZONE) {
       if(player.isAlive) {
         player.tick();
+        apple.tick();
         for(Snake s : botList) {
           s.tick();
         }
@@ -100,6 +109,9 @@ public class GamePanel extends JPanel implements Runnable {
     if(state != State.MENU) {
       gridMap.draw(g2d);
       player.draw(g2d);
+
+      apple.draw(g2d);
+
       for(Snake s : botList)
         s.draw(g2d);
       g2d.setColor(Color.RED);
