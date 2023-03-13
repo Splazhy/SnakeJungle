@@ -1,3 +1,4 @@
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
@@ -7,7 +8,7 @@ import javax.imageio.ImageIO;
 public class BotSquigglySnake extends Snake {
 
   private int[] markCellPos;
-  private static boolean isDown;
+  private boolean isDown;
   private Random rnd;
   private int randomDist;
 
@@ -25,9 +26,16 @@ public class BotSquigglySnake extends Snake {
 
   @Override
   public void tick() {
-    /* AI TEST */
-    int xDist = Math.abs(markCellPos[0]-headCellPos[0]);
-    int yDist = Math.abs(markCellPos[1]-headCellPos[1]);
+    int xDist = Math.min(Math.abs(markCellPos[0] - headCellPos[0])
+    , Math.min(Math.min(Math.abs(markCellPos[0]+40 - headCellPos[0])
+    , Math.abs(markCellPos[0] - headCellPos[0]+40))
+    , Math.min(Math.abs(markCellPos[0]-40 - headCellPos[0])
+    , Math.abs(markCellPos[0] - headCellPos[0]-40))));
+    int yDist = Math.min(Math.abs(markCellPos[1] - headCellPos[1])
+    , Math.min(Math.min(Math.abs(markCellPos[1]+40 - headCellPos[1])
+    , Math.abs(markCellPos[1] - headCellPos[1]+40))
+    , Math.min(Math.abs(markCellPos[1]-40 - headCellPos[1])
+    , Math.abs(markCellPos[1] - headCellPos[1]-40))));
     if(markCellPos[0] != headCellPos[0] || markCellPos[1] != headCellPos[1]) {
       switch(facing) {
       case 0:
@@ -90,12 +98,5 @@ public class BotSquigglySnake extends Snake {
     } catch(IOException e) {
       e.printStackTrace();
     }
-  }
-  /**
-   * for debugging purpose
-   */
-  @Override
-  public String toString() {
-    return String.format("[%d,%d]",headX,headY);
   }
 }
