@@ -60,11 +60,8 @@ public class GamePanel extends JPanel implements Runnable {
     // System.out.println("lesss go!"); // debug
     gridMap = new GridMap();
     player = new PlayerSnake(gridMap, keyH);
-
     apple = new Apple(gridMap);
-
     botList.add(new BotSquigglySnake(gridMap));
-
     setBackground(Color.BLACK);
     state = State.PLAYZONE;
   }
@@ -89,6 +86,11 @@ public class GamePanel extends JPanel implements Runnable {
         apple.tick();
         for(Snake s : botList) {
           s.tick();
+        }
+        if(player.isEating) {
+          player.grow(1);
+          player.isEating = false;
+          apple.addApple();
         }
       }
       else {

@@ -11,6 +11,7 @@ public class Apple{
     protected int newAppleX,newAppleY;
     private BufferedImage appleImg;
     private Random random;
+    private GameHitbox appleHitbox;
 
     public Apple(GridMap gridmap){
         random = new Random();
@@ -19,6 +20,9 @@ public class Apple{
         } catch(IOException e) {
             e.printStackTrace();
         }
+        appleHitbox = new GameHitbox(appleX+4,appleY+4,6,6, -1); //ID(-1)
+        GamePanel.hitboxList.add(appleHitbox);
+
         // addApple();
         
     }
@@ -35,9 +39,13 @@ public class Apple{
     }
 
     protected void tick(){
-        addApple();
+        // addApple();
         appleX = GridMap.cellLayout[newAppleX][newAppleY][0];
         appleY = GridMap.cellLayout[newAppleX][newAppleY][1];
+
+        // appleX = GridMap.cellLayout[10][10][0];
+        // appleY = GridMap.cellLayout[10][10][1];
+        appleHitbox.setFrame(appleX+2, appleY+2, 10, 10);
         
     }
 
