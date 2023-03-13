@@ -22,6 +22,7 @@ public abstract class Snake {
   protected double normalSpeed;
   private static boolean isChecking;
   protected boolean isAlive;
+  protected boolean isEating;
   /**
    * 
    */
@@ -51,6 +52,7 @@ public abstract class Snake {
     curSpeed = normalSpeed;
     facing = 3;
     isAlive = true;
+    isEating = false;
     headSprite = new BufferedImage[4];
     bodySprite = new BufferedImage[6];
     tailSprite = new BufferedImage[4];
@@ -171,6 +173,9 @@ public abstract class Snake {
       for(GameHitbox r : GamePanel.hitboxList) {
         if(!r.equals(hitbox) && hitbox.intersects(r.getBounds2D()) && r.ID > 0)
           isAlive = false;
+        else if(!r.equals(hitbox) && hitbox.intersects(r.getBounds2D()) && r.ID < 0){
+          isEating = true;
+        }
       }
       isChecking = false;
       moveData = facing*1000000 + headX*1000 + headY;
