@@ -37,6 +37,12 @@ public class GraphicUI {
       ,getCenteredX("press ENTER to play!", g2d), Main.height-(Main.height/4));
       break;
 
+    case LOADING:
+      g2d.setColor(Color.WHITE);
+      g2d.setFont(normalFont);
+      g2d.drawString("Loading...", getCenteredX("Loading", g2d), Main.height/2);
+      break;
+
     case PAUSE:
       g2d.setColor(Color.WHITE);
       g2d.setFont(normalFont);

@@ -1,5 +1,4 @@
-
-import java.util.*;
+import java.util.Random;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +22,7 @@ public class Apple{
         appleHitbox = new GameHitbox(appleX+4,appleY+4,6,6, -1); //ID(-1)
         GamePanel.hitboxList.add(appleHitbox);
 
-        // respawnApple();
+        respawnApple();
         
     }
 

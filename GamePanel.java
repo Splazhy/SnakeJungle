@@ -94,6 +94,8 @@ public class GamePanel extends JPanel implements Runnable {
         botList.clear();
         state = State.GAMEOVER;
       }
+    } else if(state == State.LOADING) {
+      load();
     }
   }
 
@@ -104,7 +106,7 @@ public class GamePanel extends JPanel implements Runnable {
     Graphics2D scaledg2d = (Graphics2D)g;
     Graphics2D g2d = gridImage.createGraphics();
 
-    if(state != State.MENU) {
+    if(state.screen == 1) {
       gridMap.draw(g2d);
       player.draw(g2d);
 

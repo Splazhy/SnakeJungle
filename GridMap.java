@@ -45,23 +45,4 @@ public class GridMap {
     offset[0] = Main.width/2 - size/2;
     offset[1] = Main.height/2 - size/2;
   }
-
-  /**
-   * @param x
-   * @param y
-   * @return positions according to gridimage and gridmap
-   */
-  protected static int[] getCellPos(int x, int y) {
-    int cellX, cellY;
-    {
-      int lowerX = (x / 16) * 16;
-      int upperX = lowerX + 16;
-      int lowerY = (y / 16) * 16;
-      int upperY = lowerY + 16;
-
-      cellX = ((x - lowerX < upperX - x) ? lowerX/16 : upperX/16) % 40;
-      cellY = ((y - lowerY < upperY - y) ? lowerY/16 : upperY/16) % 40;
-    }
-    return new int[] {cellX, cellY};
-  }
 }

@@ -45,6 +45,7 @@ public abstract class Snake {
    * 3 for RIGHT <p>
    */
   protected int facing;
+  protected int facingQ;
 
   protected BufferedImage[] headSprite;
   protected BufferedImage[] bodySprite;
@@ -65,7 +66,7 @@ public abstract class Snake {
     snakeHitbox = new LinkedList<>();
     loadSprite();
     initSnake();
-    headCellPos = GridMap.getCellPos(headX, headY);
+    headCellPos = getCellPos(headX, headY);
   }
 
   protected abstract void initSnake();
@@ -106,6 +107,18 @@ public abstract class Snake {
       snakeList.get(snakeList.size()-1).followee = body;
       for(int j = 0; j < 16; j++)
         snakeList.get(snakeList.size()-1).moveQueue.addFirst(-1);
+    }
+  }
+
+  private int[] getCellPos(int x, int y) {
+    switch(facing) {
+      case 0: case 1:
+        return new int[] {x/16, y/16};
+      default:// case down: case right:
+        int tmpX = x/16, tmpY = y/16;
+        if(x % 16 != 0) ++tmpX;
+        if(y % 16 != 0) ++tmpY;
+        return new int[] {tmpX % 40, tmpY % 40};
     }
   }
   
@@ -176,7 +189,7 @@ public abstract class Snake {
         break;
       }
       x = headX; y = headY;
-      headCellPos = GridMap.getCellPos(headX, headY);
+      headCellPos = getCellPos(headX, headY);
       switch(facing) {
         case 0: hitbox.setFrame(headX+5, headY, 4, 4); break;
         case 1: hitbox.setFrame(headX, headY+5, 4, 4); break;
@@ -230,7 +243,7 @@ public abstract class Snake {
         x = moveData / 1000 % 1000;
         y = moveData % 1000;
       }
-      cellPos = GridMap.getCellPos(x, y);
+      cellPos = getCellPos(x, y);
       hitbox.setFrame(x+2, y+2, 10, 10);
       moveQueue.addLast(followee.moveQueue.pollFirst());
     }
@@ -274,7 +287,7 @@ public abstract class Snake {
         x = moveData / 1000 % 1000;
         y = moveData % 1000;
       }
-      cellPos = GridMap.getCellPos(x, y);
+      cellPos = getCellPos(x, y);
       hitbox.setFrame(x+2, y+2, 10, 10);
     }
 
