@@ -35,6 +35,7 @@ public class PlayerSnake extends Snake {
         markCellPos[0] = headCellPos[0];
         markCellPos[1] = headCellPos[1];
       }
+
       if(keyH.movementIsHeld[1] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]
       && facing != 3 && facing != 1) {
         facing = 1;
