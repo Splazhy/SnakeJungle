@@ -4,6 +4,9 @@ import java.awt.image.BufferedImage;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.swing.JPanel;
 import javax.swing.plaf.ColorUIResource;
 
@@ -12,14 +15,17 @@ public class GamePanel extends JPanel implements Runnable {
   private KeyHandler keyH;
   private GraphicUI graphicUI;
   private Thread gameThread;
-  private static final int FPS = 1200;
 
+  protected static List<GameHitbox> hitboxList;
+  protected static List<Snake> botList;
   protected GridMap gridMap;
   protected PlayerSnake player;
   protected Apple apple;
   public GamePanel() throws IOException {
     keyH = new KeyHandler(this);
     graphicUI = new GraphicUI(this);
+    hitboxList = new LinkedList<>();
+    botList = new LinkedList<>();
 
     setLayout(null);
     setPreferredSize(new Dimension(640, 640));
@@ -38,24 +44,15 @@ public class GamePanel extends JPanel implements Runnable {
   @Override
   public void run() {
 
-    double tickInterval = 1000000000 / FPS;
-    double deltaTime = 0;
-    long lastTime = System.nanoTime();
-    long curTime;
-
     while(gameThread.isAlive()) {
-
-      curTime = System.nanoTime();
-      deltaTime += (curTime - lastTime) / tickInterval;
-
-      if(deltaTime >= 1) {
-        update();
-        deltaTime--;
-      }
+      update();
       repaint();
-
-      lastTime = curTime;
-
+      if(state == State.PLAYZONE)
+        try {
+          Thread.sleep(Math.round(21*(-Math.log(player.curSpeed)/Math.log(2))+50));
+        } catch(InterruptedException e) {
+          e.printStackTrace();
+        }
     }
   }
 
@@ -63,7 +60,11 @@ public class GamePanel extends JPanel implements Runnable {
     // System.out.println("lesss go!"); // debug
     gridMap = new GridMap();
     player = new PlayerSnake(gridMap, keyH);
+
     apple = new Apple(gridMap);
+
+    botList.add(new BotSquigglySnake(gridMap));
+
     setBackground(Color.BLACK);
     state = State.PLAYZONE;
   }
@@ -71,15 +72,30 @@ public class GamePanel extends JPanel implements Runnable {
   protected void unload() {
     gridMap = null;
     player = null;
+
     apple = null;
+
+    hitboxList.clear();
+    botList.clear();
+
     setBackground(new ColorUIResource(24, 34, 40));
     state = State.MENU;
   }
 
   private void update() {
     if(state == State.PLAYZONE) {
-      player.tick();
-      apple.tick();
+      if(player.isAlive) {
+        player.tick();
+        apple.tick();
+        for(Snake s : botList) {
+          s.tick();
+        }
+      }
+      else {
+        hitboxList.clear();
+        botList.clear();
+        state = State.GAMEOVER;
+      }
     }
   }
 
@@ -93,7 +109,16 @@ public class GamePanel extends JPanel implements Runnable {
     if(state != State.MENU) {
       gridMap.draw(g2d);
       player.draw(g2d);
+
       apple.draw(g2d);
+
+      for(Snake s : botList)
+        s.draw(g2d);
+      g2d.setColor(Color.RED);
+      for(GameHitbox r : hitboxList) // debug
+        g2d.draw(r);
+
+      /* draws the whole game grid image */
       scaledg2d.drawImage(gridImage,GridMap.offset[0],GridMap.offset[1],GridMap.size,GridMap.size,null);
     }
     
@@ -104,6 +129,7 @@ public class GamePanel extends JPanel implements Runnable {
   }
 
   protected void updatePanel() {
-    gridMap.update();
+    if(gridMap != null)
+      gridMap.update();
   }
 }

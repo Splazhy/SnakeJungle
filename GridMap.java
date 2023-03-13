@@ -17,7 +17,6 @@ public class GridMap {
    * จุดซ้ายบนของแต่ละช่องใน GridMap 
    */
   protected static int[][][] cellLayout; // [x][y]{x,y}
-  protected static int[][] gridStatus;
   private BufferedImage img;
 
   protected GridMap() {
@@ -52,7 +51,7 @@ public class GridMap {
    * @param y
    * @return positions according to gridimage and gridmap
    */
-  protected static int[][] getCellPos(int x, int y) {
+  protected static int[] getCellPos(int x, int y) {
     int cellX, cellY;
     {
       int lowerX = (x / 16) * 16;
@@ -63,6 +62,6 @@ public class GridMap {
       cellX = ((x - lowerX < upperX - x) ? lowerX/16 : upperX/16) % 40;
       cellY = ((y - lowerY < upperY - y) ? lowerY/16 : upperY/16) % 40;
     }
-    return new int[][] {cellLayout[cellX][cellY], {cellX, cellY}};
+    return new int[] {cellX, cellY};
   }
 }
