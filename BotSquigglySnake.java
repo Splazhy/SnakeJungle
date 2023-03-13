@@ -17,6 +17,7 @@ public class BotSquigglySnake extends Snake {
     normalSpeed = 1;
     // normalSpeed = 0.0000001; // debug
     facing = 3;
+    VALUE = 10;
     markCellPos = new int[2];
     markCellPos[0] = headCellPos[0]; // test
     markCellPos[1] = headCellPos[1]; // test

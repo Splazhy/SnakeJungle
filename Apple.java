@@ -7,11 +7,11 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 public class Apple{
-    protected int appleX,appleY;
-    protected int newAppleX,newAppleY;
+    protected static int appleX,appleY;
+    protected static int newAppleX,newAppleY;
     private BufferedImage appleImg;
-    private Random random;
-    private GameHitbox appleHitbox;
+    private static Random random;
+    private static GameHitbox appleHitbox;
 
     public Apple(GridMap gridmap){
         random = new Random();
@@ -23,11 +23,11 @@ public class Apple{
         appleHitbox = new GameHitbox(appleX+4,appleY+4,6,6, -1); //ID(-1)
         GamePanel.hitboxList.add(appleHitbox);
 
-        // addApple();
+        // respawnApple();
         
     }
 
-    public void addApple(){
+    public static void respawnApple(){
         newAppleX = random.nextInt(40);
         newAppleY = random.nextInt(40);
     }
@@ -39,7 +39,7 @@ public class Apple{
     }
 
     protected void tick(){
-        // addApple();
+        // respawnApple();
         appleX = GridMap.cellLayout[newAppleX][newAppleY][0];
         appleY = GridMap.cellLayout[newAppleX][newAppleY][1];
 

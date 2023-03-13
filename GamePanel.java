@@ -49,7 +49,8 @@ public class GamePanel extends JPanel implements Runnable {
       repaint();
       if(state == State.PLAYZONE)
         try {
-          Thread.sleep(Math.round(21*(-Math.log(player.curSpeed)/Math.log(2))+50));
+          // Math.round(21*(-Math.log(player.curSpeed)/Math.log(2))+50) // old dependent game speed
+          Thread.sleep(8);
         } catch(InterruptedException e) {
           e.printStackTrace();
         }
@@ -62,6 +63,7 @@ public class GamePanel extends JPanel implements Runnable {
     player = new PlayerSnake(gridMap, keyH);
     apple = new Apple(gridMap);
     botList.add(new BotSquigglySnake(gridMap));
+    Score.restart();
     setBackground(Color.BLACK);
     state = State.PLAYZONE;
   }
@@ -69,7 +71,6 @@ public class GamePanel extends JPanel implements Runnable {
   protected void unload() {
     gridMap = null;
     player = null;
-
     apple = null;
 
     hitboxList.clear();
@@ -86,11 +87,6 @@ public class GamePanel extends JPanel implements Runnable {
         apple.tick();
         for(Snake s : botList) {
           s.tick();
-        }
-        if(player.isEating) {
-          player.grow(1);
-          player.isEating = false;
-          apple.addApple();
         }
       }
       else {
