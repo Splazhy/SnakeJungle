@@ -18,8 +18,8 @@ public abstract class Snake {
    * ตำแหน่งซ้ายบนของหัวงู
    */
   protected int headX, headY;
-  protected int curSpeed;
-  protected int normalSpeed;
+  protected double curSpeed;
+  protected double normalSpeed;
   private static boolean isChecking;
   protected boolean isAlive;
   protected boolean isEating;
@@ -146,18 +146,18 @@ public abstract class Snake {
       switch(facing) {
       case 0:
         headX = GridMap.cellLayout[headCellPos[0]][0][0];
-        headY = (headY > 0) ? headY-=curSpeed : 640;
+        headY = (headY > 0) ? --headY : 640;
         break;
       case 1:
-        headX = (headX > 0) ? headX-=curSpeed : 640;
+        headX = (headX > 0) ? --headX : 640;
         headY = GridMap.cellLayout[0][headCellPos[1]][1];
         break;
       case 2:
         headX = GridMap.cellLayout[headCellPos[0]][0][0];
-        headY = (headY < 640) ? headY+=curSpeed : 0;
+        headY = (headY < 640) ? ++headY : 0;
         break;
       case 3:
-        headX = (headX < 640) ? headX+=curSpeed : 0;
+        headX = (headX < 640) ? ++headX : 0;
         headY = GridMap.cellLayout[0][headCellPos[1]][1];
         break;
       }

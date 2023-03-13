@@ -47,11 +47,12 @@ public class GamePanel extends JPanel implements Runnable {
     while(gameThread.isAlive()) {
       update();
       repaint();
-      try {
-        Thread.sleep(10,0);
-      } catch(InterruptedException e) {
-        e.printStackTrace();
-      }
+      if(state == State.PLAYZONE)
+        try {
+          Thread.sleep(Math.round(21*(-Math.log(player.curSpeed)/Math.log(2))+50));
+        } catch(InterruptedException e) {
+          e.printStackTrace();
+        }
     }
   }
 
@@ -68,19 +69,21 @@ public class GamePanel extends JPanel implements Runnable {
   protected void unload() {
     gridMap = null;
     player = null;
+
     apple = null;
+
     hitboxList.clear();
     botList.clear();
+
     setBackground(new ColorUIResource(24, 34, 40));
     state = State.MENU;
   }
 
   private void update() {
     if(state == State.PLAYZONE) {
-      player.tick();
-      apple.tick();
       if(player.isAlive) {
         player.tick();
+        apple.tick();
         for(Snake s : botList) {
           s.tick();
         }
@@ -108,7 +111,9 @@ public class GamePanel extends JPanel implements Runnable {
     if(state != State.MENU) {
       gridMap.draw(g2d);
       player.draw(g2d);
+
       apple.draw(g2d);
+
       for(Snake s : botList)
         s.draw(g2d);
       g2d.setColor(Color.RED);
@@ -126,6 +131,7 @@ public class GamePanel extends JPanel implements Runnable {
   }
 
   protected void updatePanel() {
-    gridMap.update();
+    if(gridMap != null)
+      gridMap.update();
   }
 }
