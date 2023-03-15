@@ -46,6 +46,9 @@ public class KeyHandler implements KeyListener {
       if(pressed == KeyEvent.VK_SEMICOLON) { // debug
         gp.player.grow(5);
       }
+      if(pressed == KeyEvent.VK_SLASH) {
+        Score.addScore(5);
+      }
       break;
     case PAUSE: break;
     case GAMEOVER: break;

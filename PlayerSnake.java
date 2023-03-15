@@ -72,10 +72,10 @@ public class PlayerSnake extends Snake {
 
       bodySprite[0] = ImageIO.read(new File("sprites/snake/playerbody_vertical.png"));
       bodySprite[1] = ImageIO.read(new File("sprites/snake/playerbody_horizontal.png"));
-      bodySprite[2] = ImageIO.read(new File("sprites/snake/playerbody_UL.png"));
-      bodySprite[3] = ImageIO.read(new File("sprites/snake/playerbody_UR.png"));
-      bodySprite[4] = ImageIO.read(new File("sprites/snake/playerbody_DL.png"));
-      bodySprite[5] = ImageIO.read(new File("sprites/snake/playerbody_DR.png"));
+      turnSprite[0] = ImageIO.read(new File("sprites/snake/playerbody_UL.png"));
+      turnSprite[1] = ImageIO.read(new File("sprites/snake/playerbody_UR.png"));
+      turnSprite[2] = ImageIO.read(new File("sprites/snake/playerbody_DL.png"));
+      turnSprite[3] = ImageIO.read(new File("sprites/snake/playerbody_DR.png"));
 
       tailSprite[0] = ImageIO.read(new File("sprites/snake/playertail_up.png"));
       tailSprite[1] = ImageIO.read(new File("sprites/snake/playertail_left.png"));

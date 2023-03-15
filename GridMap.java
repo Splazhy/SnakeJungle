@@ -17,6 +17,7 @@ public class GridMap {
    * จุดซ้ายบนของแต่ละช่องใน GridMap 
    */
   protected static int[][][] cellLayout; // [x][y]{x,y}
+  // TODO: cellProperties
   private BufferedImage img;
 
   protected GridMap() {

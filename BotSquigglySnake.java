@@ -1,4 +1,3 @@
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
@@ -16,7 +15,7 @@ public class BotSquigglySnake extends Snake {
     super(2);
     normalSpeed = 1;
     curSpeed = normalSpeed;
-    VALUE = 10;
+    VALUE = 5;
     markCellPos = new int[2];
     markCellPos[0] = headCellPos[0]; // test
     markCellPos[1] = headCellPos[1]; // test
@@ -69,8 +68,8 @@ public class BotSquigglySnake extends Snake {
   
   @Override
   protected void initSnake() {
-    headX = -16;
-    headY = GridMap.cellLayout[20][25][1];
+    headX = -16; 
+    headY = GridMap.cellLayout[0][rng.nextInt(40)][1];
     partList.add(new SnakeHead(facing, headSprite));
     partList.add(new SnakeBody(headX, headY, facing, partList.get(partList.size()-1), bodySprite));
     partList.add(new SnakeTail(headX, headY, facing, partList.get(partList.size()-1), tailSprite));
@@ -86,10 +85,10 @@ public class BotSquigglySnake extends Snake {
 
       bodySprite[0] = ImageIO.read(new File("sprites/snake/playerbody_vertical.png"));
       bodySprite[1] = ImageIO.read(new File("sprites/snake/playerbody_horizontal.png"));
-      bodySprite[2] = ImageIO.read(new File("sprites/snake/playerbody_UL.png"));
-      bodySprite[3] = ImageIO.read(new File("sprites/snake/playerbody_UR.png"));
-      bodySprite[4] = ImageIO.read(new File("sprites/snake/playerbody_DL.png"));
-      bodySprite[5] = ImageIO.read(new File("sprites/snake/playerbody_DR.png"));
+      turnSprite[0] = ImageIO.read(new File("sprites/snake/playerbody_UL.png"));
+      turnSprite[1] = ImageIO.read(new File("sprites/snake/playerbody_UR.png"));
+      turnSprite[2] = ImageIO.read(new File("sprites/snake/playerbody_DL.png"));
+      turnSprite[3] = ImageIO.read(new File("sprites/snake/playerbody_DR.png"));
 
       tailSprite[0] = ImageIO.read(new File("sprites/snake/playertail_up.png"));
       tailSprite[1] = ImageIO.read(new File("sprites/snake/playertail_left.png"));

@@ -18,6 +18,10 @@ public class Score {
         curScore = 0;
     }
 
+    protected static int getCurScore() {
+        return curScore;
+    }
+
     protected static String MAX_SCORE() {
         return String.format("[High Score : %d]", maxScore);
     }

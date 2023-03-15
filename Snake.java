@@ -3,6 +3,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Random;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -46,10 +48,12 @@ public abstract class Snake {
    */
   protected int facing;
   protected Queue<Integer> facingQ;
+  protected Random rng;
   protected HashMap<Integer, Integer> turnPointMap;
 
   protected BufferedImage[] headSprite;
   protected BufferedImage[] bodySprite;
+  protected BufferedImage[] turnSprite;
   protected BufferedImage[] tailSprite;
 
   public Snake(int ID) {
@@ -63,11 +67,13 @@ public abstract class Snake {
     isAlive = true;
     isEating = false;
     headSprite = new BufferedImage[4];
-    bodySprite = new BufferedImage[6];
+    bodySprite = new BufferedImage[2];
+    turnSprite = new BufferedImage[4];
     tailSprite = new BufferedImage[4];
     partList = new ArrayList<>();
     partHitbox = new LinkedList<>();
     turnPointMap = new HashMap<>();
+    rng = new Random();
     loadSprite();
     initSnake();
     headCellPos = getCellPos(headX, headY, facing);
@@ -106,6 +112,18 @@ public abstract class Snake {
     for(int i = 0; i < partList.size(); i++) {
       partList.get(i).draw(g2d);
     }
+    g2d.setColor(Color.MAGENTA);
+    turnPointMap.forEach((k, v) -> {
+      int turnCase = ((v/10 == 3 && v%10 == 0) || (v/10 == 2 && v%10 == 1)) ? 0
+      : ((v/10 == 1 && v%10 == 0) || (v/10 == 2 && v%10 == 3)) ? 1
+      : ((v/10 == 3 && v%10 == 2) || (v/10 == 0 && v%10 == 1)) ? 2 : 3;
+      if(((k/1000)/16) % 2 == 0 ^ ((k%1000)/16) % 2 == 0)
+        g2d.setColor(new Color(28, 43, 52));
+      else
+        g2d.setColor(new Color(24, 34, 40));
+      g2d.fillRect(k/1000, k%1000, 16, 16);
+      g2d.drawImage(turnSprite[turnCase], k/1000, k%1000, null);
+    });
   }
 
   protected void grow(int n) {
@@ -173,8 +191,9 @@ public abstract class Snake {
     protected void tick() {
       for(int i = 0; i < curSpeed; i++) {
         if(!facingQ.isEmpty() && headX % 16 == 0 && headY % 16 == 0) {
+          int lastFacing = facing;
           facing = facingQ.poll();
-          turnPointMap.put(headX*1000 + headY, facing);
+          turnPointMap.put(headX*1000 + headY, lastFacing*10 + facing);
         }
         switch(facing) {
           case 0:
@@ -233,6 +252,7 @@ public abstract class Snake {
 
     @Override
     protected void tick() {
+      // FIXME: need a better way to find dist
       int dist = Math.min(Math.abs(followee.x - x) + Math.abs(followee.y - y)
       , Math.min(Math.abs(followee.x - (x+640)) + Math.abs(followee.y - y)
       , Math.min(Math.abs(followee.x - (x-640)) + Math.abs(followee.y - y)
@@ -241,7 +261,7 @@ public abstract class Snake {
       if(dist > 16) {
         for(int i = 0; i < (dist-16); i++) {
           if(turnPointMap.containsKey(x*1000 + y)) {
-            subFacing = turnPointMap.get(x*1000 + y);
+            subFacing = turnPointMap.get(x*1000 + y) % 10;
           }
           switch(subFacing) {
             case 0:
@@ -309,7 +329,7 @@ public abstract class Snake {
         drawWrap = true;
       for(int i = 0; i < (dist-16); i++) {
         if(turnPointMap.containsKey(x*1000 + y)) {
-          subFacing = turnPointMap.get(x*1000 + y);
+          subFacing = turnPointMap.get(x*1000 + y) % 10;
           turnPointMap.remove(x*1000 + y);
         }
         switch(subFacing) {

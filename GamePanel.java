@@ -21,6 +21,7 @@ public class GamePanel extends JPanel implements Runnable {
   protected static List<Snake> botList;
   protected GridMap gridMap;
   protected PlayerSnake player;
+  protected BotSpawner botSpawner;
   protected Apple apple;
   public GamePanel() throws IOException {
     keyH = new KeyHandler(this);
@@ -69,8 +70,8 @@ public class GamePanel extends JPanel implements Runnable {
     // System.out.println("lesss go!"); // debug
     gridMap = new GridMap();
     player = new PlayerSnake(gridMap, keyH);
+    botSpawner = new BotSpawner(this);
     apple = new Apple(gridMap);
-    botList.add(new BotSquigglySnake(gridMap));
     Score.restart();
     setBackground(Color.BLACK);
     state = State.PLAYZONE;
@@ -79,6 +80,7 @@ public class GamePanel extends JPanel implements Runnable {
   protected void unload() {
     gridMap = null;
     player = null;
+    botSpawner = null;
     apple = null;
 
     hitboxList.clear();
@@ -96,6 +98,7 @@ public class GamePanel extends JPanel implements Runnable {
         for(Snake s : botList) {
           s.tick();
         }
+        botSpawner.tick();
       }
       else {
         hitboxList.clear();
@@ -124,8 +127,9 @@ public class GamePanel extends JPanel implements Runnable {
       for(Snake s : botList)
         s.draw(g2d);
       g2d.setColor(Color.RED);
-      for(GameHitbox r : hitboxList) // debug
-        g2d.draw(r);
+      // for(GameHitbox r : hitboxList) // debug
+      //   g2d.draw(r);
+      g2d.clearRect(ALLBITS, ABORT, WIDTH, HEIGHT);
 
       /* draws the whole game grid image */
       scaledg2d.drawImage(gridImage,GridMap.offset[0],GridMap.offset[1],GridMap.size,GridMap.size,null);
