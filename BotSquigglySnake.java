@@ -15,8 +15,7 @@ public class BotSquigglySnake extends Snake {
   public BotSquigglySnake(GridMap gridMap) {
     super(2);
     normalSpeed = 1;
-    // normalSpeed = 0.0000001; // debug
-    facing = 3;
+    curSpeed = normalSpeed;
     VALUE = 10;
     markCellPos = new int[2];
     markCellPos[0] = headCellPos[0]; // test
@@ -41,7 +40,7 @@ public class BotSquigglySnake extends Snake {
       switch(facing) {
       case 0:
         if(yDist >= randomDist) {
-          facing = 3;
+          facingQ.add(3);
           markCellPos[0] = headCellPos[0];
           markCellPos[1] = headCellPos[1];
           isDown = true;
@@ -49,7 +48,7 @@ public class BotSquigglySnake extends Snake {
         break;
       case 2:
         if(yDist >= randomDist) {
-          facing = 3;
+          facingQ.add(3);
           markCellPos[0] = headCellPos[0];
           markCellPos[1] = headCellPos[1];
           isDown = false;
@@ -57,7 +56,7 @@ public class BotSquigglySnake extends Snake {
         break;
       case 3:
         if(xDist >= 1) {
-          facing = (isDown) ? 2 : 0;
+          facingQ.add((isDown) ? 2 : 0);
           markCellPos[0] = headCellPos[0];
           markCellPos[1] = headCellPos[1];
           randomDist = rnd.nextInt(10)+3;
@@ -70,11 +69,11 @@ public class BotSquigglySnake extends Snake {
   
   @Override
   protected void initSnake() {
-    headX = GridMap.cellLayout[20][20][0];
-    headY = GridMap.cellLayout[20][20][1];
-    snakeList.add(new SnakeHead(facing, headSprite));
-    snakeList.add(new SnakeBody(headX-16, headY, facing, snakeList.get(snakeList.size()-1), bodySprite));
-    snakeList.add(new SnakeTail(headX-32, headY, facing, snakeList.get(snakeList.size()-1), tailSprite));
+    headX = -16;
+    headY = GridMap.cellLayout[20][25][1];
+    partList.add(new SnakeHead(facing, headSprite));
+    partList.add(new SnakeBody(headX, headY, facing, partList.get(partList.size()-1), bodySprite));
+    partList.add(new SnakeTail(headX, headY, facing, partList.get(partList.size()-1), tailSprite));
     grow(30);
   }
   @Override

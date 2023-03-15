@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.plaf.ColorUIResource;
 
 public class GamePanel extends JPanel implements Runnable {
+  private static final int FPS = 60;
   protected static State state;
   private KeyHandler keyH;
   private GraphicUI graphicUI;
@@ -44,16 +45,23 @@ public class GamePanel extends JPanel implements Runnable {
   @Override
   public void run() {
 
+    double interval = 1_000_000_000/FPS;
+    double deltaTime = 0;
+    long lastTime = System.nanoTime();
+    long curTime;
+
     while(gameThread.isAlive()) {
-      update();
-      repaint();
-      if(state == State.PLAYZONE)
-        try {
-          // Math.round(21*(-Math.log(player.curSpeed)/Math.log(2))+50) // old dependent game speed
-          Thread.sleep(8);
-        } catch(InterruptedException e) {
-          e.printStackTrace();
-        }
+
+      curTime = System.nanoTime();
+      deltaTime += (curTime - lastTime) / interval;
+      lastTime = System.nanoTime();
+
+      if(deltaTime >= 1) {
+        update();
+        repaint();
+        --deltaTime;
+      }
+      
     }
   }
 
@@ -95,6 +103,7 @@ public class GamePanel extends JPanel implements Runnable {
         state = State.GAMEOVER;
       }
     } else if(state == State.LOADING) {
+      repaint();
       load();
     }
   }
