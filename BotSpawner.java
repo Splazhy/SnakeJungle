@@ -21,7 +21,7 @@ public class BotSpawner {
   protected void tick() {
     scoreIncreased += Score.getCurScore() - lastScore;
     if(scoreIncreased >= 10) {
-      botQueue.add(new BotSquigglySnake(gp.gridMap));
+      botQueue.add(new BotHungrySnake(gp.gridMap));
       scoreIncreased = 0;
     }
     addBot();

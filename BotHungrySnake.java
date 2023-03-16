@@ -3,56 +3,31 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class PlayerSnake extends Snake {
-  private KeyHandler keyH;
-  private int sprintSpeed;
-  private Integer newFacing;
+public class BotHungrySnake extends Snake {
 
-  public PlayerSnake(GridMap gridMap, KeyHandler keyH) {
-    super(1);
+  private int[] targetedFood; // idk figure it out
+
+  public BotHungrySnake(GridMap gridMap) {
+    super(2);
     normalSpeed = 1;
-    sprintSpeed = 3;
-    this.keyH = keyH;
+    curSpeed = normalSpeed;
+    VALUE = 5;
   }
 
   @Override
   public void tick() {
-    if(!keyH.movementIsHeld[0] && !keyH.movementIsHeld[1]
-      && !keyH.movementIsHeld[2] && !keyH.movementIsHeld[3])
-      curSpeed = normalSpeed;
-    else if(!keyH.movementIsHeld[(facing+2)%4])
-      curSpeed = sprintSpeed;
-    newFacing = null;
-    if(keyH.movementIsHeld[0] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]
-    && facing != 2 && facing != 0) {
-      newFacing = 0;
-    }
-    if(keyH.movementIsHeld[1] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]
-    && facing != 3 && facing != 1) {
-      newFacing = 1;
-    }
-    if(keyH.movementIsHeld[2] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]
-    && facing != 0 && facing != 2) {
-      newFacing = 2;
-    }
-    if(keyH.movementIsHeld[3] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]
-    && facing != 1 && facing != 3) {
-      newFacing = 3;
-    }
-    if(newFacing != null && (facingQ.isEmpty()
-      || (facingQ.peekLast() % 2 != newFacing % 2))) {
-      facingQ.add(newFacing);
-    }
-    super.tick(); // lmao
+    // TODO: Artificial Intelligence
+    super.tick();
   }
   
   @Override
   protected void initSnake() {
-    headX = -16;
-    headY = GridMap.cellLayout[10][20][1];
+    headX = -16; 
+    headY = GridMap.cellLayout[0][rng.nextInt(40)][1];
     partList.add(new SnakeHead(facing, headSprite));
     partList.add(new SnakeBody(headX, headY, facing, partList.get(partList.size()-1), bodySprite));
     partList.add(new SnakeTail(headX, headY, facing, partList.get(partList.size()-1), tailSprite));
+    grow(30);
   }
   @Override
   protected void loadSprite() {
@@ -64,7 +39,7 @@ public class PlayerSnake extends Snake {
 
       bodySprite[0] = ImageIO.read(new File("sprites/snake/player/body_vertical.png"));
       bodySprite[1] = ImageIO.read(new File("sprites/snake/player/body_horizontal.png"));
-
+      
       for(int i = 0; i <= 7; i++) {
         turnSprite[0][i] = ImageIO.read(new File(String.format("sprites/snake/player/turn_UL%d.png",i)));
         turnSprite[1][i] = ImageIO.read(new File(String.format("sprites/snake/player/turn_UR%d.png",i)));
@@ -79,12 +54,5 @@ public class PlayerSnake extends Snake {
     } catch(IOException e) {
       e.printStackTrace();
     }
-  }
-  /**
-   * for debugging purpose
-   */
-  @Override
-  public String toString() {
-    return String.format("[%d,%d]",headX,headY);
   }
 }

@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
+import java.util.Deque;
 import java.util.Random;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 public abstract class Snake {
 
   protected final int ID;
+  protected final int snakeHashCode;
   /**
    * score to add when certain snake died
    */
@@ -27,7 +28,7 @@ public abstract class Snake {
   protected int headX, headY;
   protected int curSpeed;
   protected int normalSpeed;
-  protected boolean drawWrap;
+  protected int turnFrame;
   protected boolean isAlive;
   protected boolean isEating;
   /**
@@ -47,13 +48,13 @@ public abstract class Snake {
    * 3 for RIGHT <p>
    */
   protected int facing;
-  protected Queue<Integer> facingQ;
+  protected Deque<Integer> facingQ;
   protected Random rng;
   protected HashMap<Integer, Integer> turnPointMap;
 
   protected BufferedImage[] headSprite;
   protected BufferedImage[] bodySprite;
-  protected BufferedImage[] turnSprite;
+  protected BufferedImage[][] turnSprite;
   protected BufferedImage[] tailSprite;
 
   public Snake(int ID) {
@@ -63,17 +64,18 @@ public abstract class Snake {
     curSpeed = normalSpeed;
     facing = 3;
     facingQ = new LinkedList<>();
-    drawWrap = false;
+    turnFrame = 0;
     isAlive = true;
     isEating = false;
     headSprite = new BufferedImage[4];
     bodySprite = new BufferedImage[2];
-    turnSprite = new BufferedImage[4];
+    turnSprite = new BufferedImage[4][8];
     tailSprite = new BufferedImage[4];
     partList = new ArrayList<>();
     partHitbox = new LinkedList<>();
     turnPointMap = new HashMap<>();
     rng = new Random();
+    snakeHashCode = rng.hashCode();
     loadSprite();
     initSnake();
     headCellPos = getCellPos(headX, headY, facing);
@@ -93,9 +95,10 @@ public abstract class Snake {
       partList.get(i).tick();
     }
     for(GameHitbox r : GamePanel.hitboxList) {
-      if(!r.equals(partHitbox.get(0)) && partHitbox.get(0).intersects(r.getBounds2D()) && r.ID > 0)
+      if(!r.equals(partHitbox.get(0)) && partHitbox.get(0).intersects(r.getBounds2D()) && r.ID > 0) {
         isAlive = false;
-      else if(!r.equals(partHitbox.get(0)) && partHitbox.get(0).intersects(r.getBounds2D()) && r.ID < 0){
+        VALUE = (r.ID == 1) ? VALUE : 0;
+      } else if(!r.equals(partHitbox.get(0)) && partHitbox.get(0).intersects(r.getBounds2D()) && r.ID < 0){
         isEating = true;
       }
     }
@@ -114,15 +117,16 @@ public abstract class Snake {
     }
     g2d.setColor(Color.MAGENTA);
     turnPointMap.forEach((k, v) -> {
-      int turnCase = ((v/10 == 3 && v%10 == 0) || (v/10 == 2 && v%10 == 1)) ? 0
-      : ((v/10 == 1 && v%10 == 0) || (v/10 == 2 && v%10 == 3)) ? 1
-      : ((v/10 == 3 && v%10 == 2) || (v/10 == 0 && v%10 == 1)) ? 2 : 3;
+      int turnCase = (v == 30) ? 0 : (v == 23) ? 1 : (v == 1) ? 2
+      : (v == 12) ? 3 : (v == 21) ? 4 : (v == 10) ? 5 : (v == 32) ? 6 : 7;
       if(((k/1000)/16) % 2 == 0 ^ ((k%1000)/16) % 2 == 0)
         g2d.setColor(new Color(28, 43, 52));
       else
         g2d.setColor(new Color(24, 34, 40));
-      g2d.fillRect(k/1000, k%1000, 16, 16);
-      g2d.drawImage(turnSprite[turnCase], k/1000, k%1000, null);
+      if(turnCase < 4)
+        g2d.drawImage(turnSprite[turnCase][turnFrame], k/1000, k%1000, g2d.getColor(), null);
+      else
+        g2d.drawImage(turnSprite[turnCase%4][7-turnFrame], k/1000, k%1000, g2d.getColor(), null);
     });
   }
 
@@ -140,12 +144,9 @@ public abstract class Snake {
   private int[] getCellPos(int x, int y, int tmpFacing) {
     switch(tmpFacing) {
       case 0: case 1:
-        return new int[] {Math.abs(x/16) % 40, Math.abs(y/16) % 40};
+        return new int[] {(x/16) % 40, (y/16) % 40};
       default:// case down: case right:
-        int tmpX = Math.abs(x/16), tmpY = Math.abs(y/16);
-        if(x % 16 != 0) ++tmpX;
-        if(y % 16 != 0) ++tmpY;
-        return new int[] {tmpX % 40, tmpY % 40};
+        return new int[] {((x+15)/16) % 40, ((y+15)/16) % 40};
     }
   }
   
@@ -155,6 +156,7 @@ public abstract class Snake {
   protected abstract class SnakePart {
     protected int x, y;
     protected int subFacing;
+    protected boolean drawWrap;
     protected int[] subCellPos;
     protected SnakePart followee;
     protected GameHitbox hitbox;
@@ -162,11 +164,13 @@ public abstract class Snake {
     protected SnakePart(int x, int y, int facing, SnakePart followee) {
       this.x = x; this.y = y;
       subFacing = facing;
+      drawWrap = false;
       subCellPos = getCellPos(x, y, subFacing);
       this.followee = followee;
-      hitbox = new GameHitbox(x+2,y+2,10,10, ID);
+      hitbox = new GameHitbox(x+2,y+2,10,10, ID, this);
       partHitbox.add(hitbox);
       GamePanel.hitboxList.add(hitbox);
+      GridMap.cellDetails.get(subCellPos[0]*100+subCellPos[1]).add(snakeHashCode);
     }
 
     protected abstract void tick();
@@ -189,11 +193,16 @@ public abstract class Snake {
 
     @Override
     protected void tick() {
+      if(!drawWrap) {
+        drawWrap = (x >= 0 && y >= 0 && x <= 624 && y <= 624) ?
+        true : false;
+      }
       for(int i = 0; i < curSpeed; i++) {
+        turnFrame = ++turnFrame % 8;
         if(!facingQ.isEmpty() && headX % 16 == 0 && headY % 16 == 0) {
-          int lastFacing = facing;
+          int prevFacing = facing;
           facing = facingQ.poll();
-          turnPointMap.put(headX*1000 + headY, lastFacing*10 + facing);
+          turnPointMap.put(headX*1000 + headY, prevFacing*10 + facing);
         }
         switch(facing) {
           case 0:
@@ -213,16 +222,17 @@ public abstract class Snake {
           headY = GridMap.cellLayout[0][headCellPos[1]][1];
           break;
         }
-        headCellPos = getCellPos(headX, headY, facing);
       }
-      x = headX; y = headY;
-      subFacing = facing;
       switch(facing) {
         case 0: hitbox.setFrame(headX+5, headY, 4, 4); break;
         case 1: hitbox.setFrame(headX, headY+5, 4, 4); break;
         case 2: hitbox.setFrame(headX+5, headY+10, 4, 4); break;
         case 3: hitbox.setFrame(headX+10, headY+5, 4, 4); break;
       }
+      x = headX; y = headY;
+      subFacing = facing;
+      headCellPos = getCellPos(headX, headY, facing);
+      GridMap.cellDetails.get(headCellPos[0]*100+headCellPos[1]).add(snakeHashCode);
     }
 
     @Override
@@ -252,6 +262,10 @@ public abstract class Snake {
 
     @Override
     protected void tick() {
+      if(!drawWrap) {
+        drawWrap = (x >= 0 && y >= 0 && x <= 624 && y <= 624) ?
+        true : false;
+      }
       // FIXME: need a better way to find dist
       int dist = Math.min(Math.abs(followee.x - x) + Math.abs(followee.y - y)
       , Math.min(Math.abs(followee.x - (x+640)) + Math.abs(followee.y - y)
@@ -320,38 +334,42 @@ public abstract class Snake {
 
     @Override
     protected void tick() {
+      if(!drawWrap) {
+        drawWrap = (x >= 0 && y >= 0 && x <= 624 && y <= 624) ?
+        true : false;
+      }
       int dist = Math.min(Math.abs(followee.x - x) + Math.abs(followee.y - y)
       , Math.min(Math.abs(followee.x - (x+640)) + Math.abs(followee.y - y)
       , Math.min(Math.abs(followee.x - (x-640)) + Math.abs(followee.y - y)
       , Math.min(Math.abs(followee.x - x) + Math.abs(followee.y - (y+640))
       , Math.abs(followee.x - x) + Math.abs(followee.y - (y-640))))));
       if(dist > 16) {
-        drawWrap = true;
-      for(int i = 0; i < (dist-16); i++) {
-        if(turnPointMap.containsKey(x*1000 + y)) {
-          subFacing = turnPointMap.get(x*1000 + y) % 10;
-          turnPointMap.remove(x*1000 + y);
+        for(int i = 0; i < (dist-16); i++) {
+          if(turnPointMap.containsKey(x*1000 + y)) {
+            subFacing = turnPointMap.get(x*1000 + y) % 10;
+            turnPointMap.remove(x*1000 + y);
+          }
+          switch(subFacing) {
+            case 0:
+              x = GridMap.cellLayout[subCellPos[0]][0][0];
+              y = (y > 0) ? --y : 640;
+              break;
+            case 1:
+              x = (x > 0) ? --x : 640;
+              y = GridMap.cellLayout[0][subCellPos[1]][1];
+              break;
+            case 2:
+              x = GridMap.cellLayout[subCellPos[0]][0][0];
+              y = (y < 624) ? ++y : -16;
+              break;
+            case 3:
+              x = (x < 624) ? ++x : -16;
+              y = GridMap.cellLayout[0][subCellPos[1]][1];
+              break;
+          }
+          subCellPos = getCellPos(x, y, subFacing);
+          GridMap.cellDetails.get(subCellPos[0]*100+subCellPos[1]).remove(snakeHashCode);
         }
-        switch(subFacing) {
-          case 0:
-            x = GridMap.cellLayout[subCellPos[0]][0][0];
-            y = (y > 0) ? --y : 640;
-            break;
-          case 1:
-            x = (x > 0) ? --x : 640;
-            y = GridMap.cellLayout[0][subCellPos[1]][1];
-            break;
-          case 2:
-            x = GridMap.cellLayout[subCellPos[0]][0][0];
-            y = (y < 624) ? ++y : -16;
-            break;
-          case 3:
-            x = (x < 624) ? ++x : -16;
-            y = GridMap.cellLayout[0][subCellPos[1]][1];
-            break;
-        }
-        subCellPos = getCellPos(x, y, subFacing);
-      }
         hitbox.setFrame(x+2, y+2, 10, 10);
       } else if(dist < 1) {
         hitbox.setFrame(x+2, y+2, 0, 0);

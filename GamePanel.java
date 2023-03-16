@@ -3,7 +3,6 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class GamePanel extends JPanel implements Runnable {
   protected PlayerSnake player;
   protected BotSpawner botSpawner;
   protected Apple apple;
-  public GamePanel() throws IOException {
+  public GamePanel() {
     keyH = new KeyHandler(this);
     graphicUI = new GraphicUI(this);
     hitboxList = new LinkedList<>();
@@ -95,10 +94,10 @@ public class GamePanel extends JPanel implements Runnable {
       if(player.isAlive) {
         player.tick();
         apple.tick();
-        for(Snake s : botList) {
-          s.tick();
-        }
-        botSpawner.tick();
+        // for(int i = 0; i < botList.size(); i++) {
+        //   botList.get(i).tick();
+        // }
+        // botSpawner.tick();
       }
       else {
         hitboxList.clear();
@@ -126,10 +125,13 @@ public class GamePanel extends JPanel implements Runnable {
 
       for(Snake s : botList)
         s.draw(g2d);
-      g2d.setColor(Color.RED);
+      // g2d.setColor(Color.RED);
       // for(GameHitbox r : hitboxList) // debug
       //   g2d.draw(r);
-      g2d.clearRect(ALLBITS, ABORT, WIDTH, HEIGHT);
+      // g2d.setColor(Color.GREEN);
+      // GridMap.cellDetails.forEach((k,v) -> {
+      //   if(v.isEmpty()) g2d.fillRect((k/100)*16, (k%100)*16, 16, 16);
+      // });
 
       /* draws the whole game grid image */
       scaledg2d.drawImage(gridImage,GridMap.offset[0],GridMap.offset[1],GridMap.size,GridMap.size,null);
