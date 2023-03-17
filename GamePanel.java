@@ -39,6 +39,7 @@ public class GamePanel extends JPanel implements Runnable {
     state = State.MENU;
     gameThread = new Thread(this);
     gameThread.start();
+    SoundEffects.playMusic();
   }
   
   @Override
@@ -96,6 +97,7 @@ public class GamePanel extends JPanel implements Runnable {
       else {
         hitboxList.clear();
         botList.clear();
+        SoundEffects.playGameOverSound();
         state = State.GAMEOVER;
       }
     }
