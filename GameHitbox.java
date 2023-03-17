@@ -9,11 +9,4 @@ public class GameHitbox extends Ellipse2D.Double {
     this.ID = ID;
     this.owner = owner;
   }
-
-  @Override
-  public int hashCode() {
-    int result = 17;
-    result = 31 * result + owner.hashCode();
-    return result;
-  }
 }

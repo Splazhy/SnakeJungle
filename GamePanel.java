@@ -29,7 +29,7 @@ public class GamePanel extends JPanel implements Runnable {
     botList = new LinkedList<>();
 
     setLayout(null);
-    setPreferredSize(new Dimension(640, 640));
+    setPreferredSize(new Dimension(800, 640));
     setDoubleBuffered(true);
     setBackground(new ColorUIResource(24, 34, 40));
     addKeyListener(keyH);

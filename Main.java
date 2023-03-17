@@ -25,7 +25,7 @@ public class Main extends JFrame {
       }
     });
     setIgnoreRepaint(true);
-    setTitle("Snake Jungle (prototype)");
+    setTitle("Snake Jungle (alpha)");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     pack();
     setLocationRelativeTo(null);

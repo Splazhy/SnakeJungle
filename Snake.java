@@ -266,12 +266,15 @@ public abstract class Snake {
         drawWrap = (x >= 0 && y >= 0 && x <= 624 && y <= 624) ?
         true : false;
       }
-      // FIXME: need a better way to find dist
       int dist = Math.min(Math.abs(followee.x - x) + Math.abs(followee.y - y)
       , Math.min(Math.abs(followee.x - (x+640)) + Math.abs(followee.y - y)
       , Math.min(Math.abs(followee.x - (x-640)) + Math.abs(followee.y - y)
       , Math.min(Math.abs(followee.x - x) + Math.abs(followee.y - (y+640))
-      , Math.abs(followee.x - x) + Math.abs(followee.y - (y-640))))));
+      , Math.min(Math.abs(followee.x - x) + Math.abs(followee.y - (y-640))
+      , Math.min(Math.abs(followee.x - (x-640)) + Math.abs(followee.y - (y-640))
+      , Math.min(Math.abs(followee.x - (x+640)) + Math.abs(followee.y - (y-640))
+      , Math.min(Math.abs(followee.x - (x-640)) + Math.abs(followee.y - (y+640))
+      , Math.abs(followee.x - (x+640)) + Math.abs(followee.y - (y+640))))))))));
       if(dist > 16) {
         for(int i = 0; i < (dist-16); i++) {
           if(turnPointMap.containsKey(x*1000 + y)) {
@@ -342,7 +345,11 @@ public abstract class Snake {
       , Math.min(Math.abs(followee.x - (x+640)) + Math.abs(followee.y - y)
       , Math.min(Math.abs(followee.x - (x-640)) + Math.abs(followee.y - y)
       , Math.min(Math.abs(followee.x - x) + Math.abs(followee.y - (y+640))
-      , Math.abs(followee.x - x) + Math.abs(followee.y - (y-640))))));
+      , Math.min(Math.abs(followee.x - x) + Math.abs(followee.y - (y-640))
+      , Math.min(Math.abs(followee.x - (x-640)) + Math.abs(followee.y - (y-640))
+      , Math.min(Math.abs(followee.x - (x+640)) + Math.abs(followee.y - (y-640))
+      , Math.min(Math.abs(followee.x - (x-640)) + Math.abs(followee.y - (y+640))
+      , Math.abs(followee.x - (x+640)) + Math.abs(followee.y - (y+640))))))))));
       if(dist > 16) {
         for(int i = 0; i < (dist-16); i++) {
           if(turnPointMap.containsKey(x*1000 + y)) {
