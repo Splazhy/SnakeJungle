@@ -1,12 +1,13 @@
 
 public class Score {
-    private static int maxScore = 0; // test 0 score
+    private static int maxScore = HighScore.getHighScore();
     private static int curScore = 0;
 
     protected static void addScore(int score){
         curScore += score;
         if (maxScore < curScore) {
             maxScore = curScore;
+            HighScore.setHighScore(String.valueOf(maxScore));
         }
     }
 
