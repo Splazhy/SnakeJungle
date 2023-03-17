@@ -7,11 +7,12 @@ public class Score {
         curScore += score;
         if (maxScore < curScore) {
             maxScore = curScore;
-            HighScore.setHighScore(String.valueOf(maxScore));
+            HighScore.setHighScore(maxScore);
         }
     }
 
     protected static void restart() {
+        maxScore = HighScore.getHighScore();
         curScore = 0;
     }
     protected static void reset() {
