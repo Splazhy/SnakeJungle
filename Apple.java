@@ -1,17 +1,17 @@
-
-import java.util.*;
+import java.util.Random;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.io.IOException;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
-public class Apple{
-    protected int appleX,appleY;
-    protected int newAppleX,newAppleY;
+public class Apple {
+    protected static int appleX,appleY;
+    protected static int newAppleX,newAppleY;
+    private static int hashCode;
     private BufferedImage appleImg;
-    private Random random;
-    private GameHitbox appleHitbox;
+    private static Random random;
+    private static GameHitbox appleHitbox;
 
     public Apple(GridMap gridmap){
         random = new Random();
@@ -20,16 +20,21 @@ public class Apple{
         } catch(IOException e) {
             e.printStackTrace();
         }
-        appleHitbox = new GameHitbox(appleX+4,appleY+4,6,6, -1); //ID(-1)
+        hashCode = hashCode();
+        appleHitbox = new GameHitbox(appleX+4,appleY+4,6,6,-1,this); //ID(-1)
         GamePanel.hitboxList.add(appleHitbox);
 
-        // addApple();
+        respawnApple();
         
     }
 
-    public void addApple(){
-        newAppleX = random.nextInt(40);
-        newAppleY = random.nextInt(40);
+    public static void respawnApple(){
+        GridMap.cellDetails.get(newAppleX*100+newAppleY).remove(hashCode);
+        GridMap.updateFreeCells();
+        int newPos = GridMap.freeCells.get(random.nextInt(GridMap.freeCells.size()));
+        newAppleX = newPos/100;
+        newAppleY = newPos%100;
+        GridMap.cellDetails.get(newAppleX*100+newAppleY).add(hashCode);
     }
 
     
@@ -39,7 +44,7 @@ public class Apple{
     }
 
     protected void tick(){
-        // addApple();
+        // respawnApple();
         appleX = GridMap.cellLayout[newAppleX][newAppleY][0];
         appleY = GridMap.cellLayout[newAppleX][newAppleY][1];
 
@@ -49,6 +54,11 @@ public class Apple{
         
     }
 
-
-
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + appleImg.hashCode();
+        result = 31 * result + random.hashCode();
+        return result;
+    }
 }

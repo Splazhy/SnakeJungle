@@ -3,23 +3,31 @@ public class Score {
     private static int maxScore = HighScore.getHighScore();
     private static int curScore = 0;
 
-    public static void addScore(int score){
+    protected static void addScore(int score){
         curScore += score;
         if (maxScore < curScore) {
             maxScore = curScore;
+            HighScore.setHighScore(String.valueOf(maxScore));
         }
     }
 
-    public static void reScore(int score){
-        if (maxScore > HighScore.getHighScore()) HighScore.setHighScore(String.valueOf(maxScore));
+    protected static void restart() {
+        curScore = 0;
+    }
+    protected static void reset() {
+        maxScore = 0;
         curScore = 0;
     }
 
-    public static String MAX_SCORE() {
+    protected static int getCurScore() {
+        return curScore;
+    }
+
+    protected static String MAX_SCORE() {
         return String.format("[High Score : %d]", maxScore);
     }
 
-    public static String CUR_SCORE() {
+    protected static String CUR_SCORE() {
         return String.format("[Score : %d]", curScore);
     }
 
