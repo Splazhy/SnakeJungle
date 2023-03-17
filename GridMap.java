@@ -2,6 +2,9 @@ import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.imageio.ImageIO;
 
@@ -17,16 +20,21 @@ public class GridMap {
    * จุดซ้ายบนของแต่ละช่องใน GridMap 
    */
   protected static int[][][] cellLayout; // [x][y]{x,y}
+  protected static HashMap<Integer, HashSet<Integer>> cellDetails;
+  protected static ArrayList<Integer> freeCells;
   private BufferedImage img;
 
   protected GridMap() {
     offset = new int[2];
     cellLayout = new int[CELL_PER_ROW][CELL_PER_ROW][2];
+    cellDetails = new HashMap<>();
+    freeCells = new ArrayList<>();
     update();
     for(int x = 0; x < CELL_PER_ROW; x++) {
       for(int y = 0; y < CELL_PER_ROW; y++) {
         cellLayout[x][y][0] = x*16;
         cellLayout[x][y][1] = y*16;
+        cellDetails.put(x*100 + y, new HashSet<>());
       }
     }
     try {
@@ -46,22 +54,10 @@ public class GridMap {
     offset[1] = Main.height/2 - size/2;
   }
 
-  /**
-   * @param x
-   * @param y
-   * @return positions according to gridimage and gridmap
-   */
-  protected static int[] getCellPos(int x, int y) {
-    int cellX, cellY;
-    {
-      int lowerX = (x / 16) * 16;
-      int upperX = lowerX + 16;
-      int lowerY = (y / 16) * 16;
-      int upperY = lowerY + 16;
-
-      cellX = ((x - lowerX < upperX - x) ? lowerX/16 : upperX/16) % 40;
-      cellY = ((y - lowerY < upperY - y) ? lowerY/16 : upperY/16) % 40;
-    }
-    return new int[] {cellX, cellY};
+  protected static void updateFreeCells() {
+    freeCells.clear();
+    cellDetails.forEach((k,v) -> {
+      if(v.isEmpty()) freeCells.add(k);
+    });
   }
 }

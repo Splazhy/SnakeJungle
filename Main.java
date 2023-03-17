@@ -24,7 +24,8 @@ public class Main extends JFrame {
         gamePanel.updatePanel();
       }
     });
-    setTitle("Snake Jungle (prototype)");
+    setIgnoreRepaint(true);
+    setTitle("Snake Jungle (alpha)");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     pack();
     setLocationRelativeTo(null);

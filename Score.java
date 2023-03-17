@@ -1,32 +1,35 @@
 
 public class Score {
-    private static int maxScore = 0; // test 0 score
+    private static int maxScore = HighScore.getHighScore();
     private static int curScore = 0;
 
-    public static void inScore(int score){
+    protected static void addScore(int score){
         curScore += score;
         if (maxScore < curScore) {
             maxScore = curScore;
+            HighScore.setHighScore(maxScore);
         }
     }
 
-    public static void inScore(){
-        curScore += 50;
-        if (maxScore < curScore) {
-            maxScore = curScore;
-        }
+    protected static void restart() {
+        maxScore = HighScore.getHighScore();
+        curScore = 0;
     }
-
-    public static void reScore(int score){
+    protected static void reset() {
+        maxScore = 0;
         curScore = 0;
     }
 
-    public static String MAX_SCORE() {
-        return String.format("[maxScore : %d]", maxScore);
+    protected static int getCurScore() {
+        return curScore;
     }
 
-    public static String CUR_SCORE() {
-        return String.format("[maxScore : %d]", curScore);
+    protected static String MAX_SCORE() {
+        return String.format("[High Score : %d]", maxScore);
+    }
+
+    protected static String CUR_SCORE() {
+        return String.format("[Score : %d]", curScore);
     }
 
     @Override

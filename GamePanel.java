@@ -3,7 +3,6 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.plaf.ColorUIResource;
 
 public class GamePanel extends JPanel implements Runnable {
+  private static final int FPS = 60;
   protected static State state;
   private KeyHandler keyH;
   private GraphicUI graphicUI;
@@ -20,15 +20,16 @@ public class GamePanel extends JPanel implements Runnable {
   protected static List<Snake> botList;
   protected GridMap gridMap;
   protected PlayerSnake player;
+  protected BotSpawner botSpawner;
   protected Apple apple;
-  public GamePanel() throws IOException {
+  public GamePanel() {
     keyH = new KeyHandler(this);
     graphicUI = new GraphicUI(this);
     hitboxList = new LinkedList<>();
     botList = new LinkedList<>();
 
     setLayout(null);
-    setPreferredSize(new Dimension(640, 640));
+    setPreferredSize(new Dimension(800, 640));
     setDoubleBuffered(true);
     setBackground(new ColorUIResource(24, 34, 40));
     addKeyListener(keyH);
@@ -45,15 +46,23 @@ public class GamePanel extends JPanel implements Runnable {
   @Override
   public void run() {
 
+    double interval = 1_000_000_000/FPS;
+    double deltaTime = 0;
+    long lastTime = System.nanoTime();
+    long curTime;
+
     while(gameThread.isAlive()) {
-      update();
-      repaint();
-      if(state == State.PLAYZONE)
-        try {
-          Thread.sleep(Math.round(21*(-Math.log(player.curSpeed)/Math.log(2))+50));
-        } catch(InterruptedException e) {
-          e.printStackTrace();
-        }
+
+      curTime = System.nanoTime();
+      deltaTime += (curTime - lastTime) / interval;
+      lastTime = System.nanoTime();
+
+      if(deltaTime >= 1) {
+        update();
+        repaint();
+        --deltaTime;
+      }
+      
     }
   }
 
@@ -61,8 +70,9 @@ public class GamePanel extends JPanel implements Runnable {
     // System.out.println("lesss go!"); // debug
     gridMap = new GridMap();
     player = new PlayerSnake(gridMap, keyH);
+    botSpawner = new BotSpawner(this);
     apple = new Apple(gridMap);
-    botList.add(new BotSquigglySnake(gridMap));
+    Score.restart();
     setBackground(Color.BLACK);
     state = State.PLAYZONE;
   }
@@ -70,7 +80,7 @@ public class GamePanel extends JPanel implements Runnable {
   protected void unload() {
     gridMap = null;
     player = null;
-
+    botSpawner = null;
     apple = null;
 
     hitboxList.clear();
@@ -85,14 +95,10 @@ public class GamePanel extends JPanel implements Runnable {
       if(player.isAlive) {
         player.tick();
         apple.tick();
-        for(Snake s : botList) {
-          s.tick();
-        }
-        if(player.isEating) {
-          player.grow(1);
-          player.isEating = false;
-          apple.addApple();
-        }
+        // for(int i = 0; i < botList.size(); i++) {
+        //   botList.get(i).tick();
+        // }
+        // botSpawner.tick();
       }
       else {
         hitboxList.clear();
@@ -100,6 +106,9 @@ public class GamePanel extends JPanel implements Runnable {
         SoundEffects.playGameOverSound();
         state = State.GAMEOVER;
       }
+    } else if(state == State.LOADING) {
+      repaint();
+      load();
     }
   }
 
@@ -110,7 +119,7 @@ public class GamePanel extends JPanel implements Runnable {
     Graphics2D scaledg2d = (Graphics2D)g;
     Graphics2D g2d = gridImage.createGraphics();
 
-    if(state != State.MENU) {
+    if(state.screen == 1) {
       gridMap.draw(g2d);
       player.draw(g2d);
 
@@ -118,9 +127,13 @@ public class GamePanel extends JPanel implements Runnable {
 
       for(Snake s : botList)
         s.draw(g2d);
-      g2d.setColor(Color.RED);
-      for(GameHitbox r : hitboxList) // debug
-        g2d.draw(r);
+      // g2d.setColor(Color.RED);
+      // for(GameHitbox r : hitboxList) // debug
+      //   g2d.draw(r);
+      // g2d.setColor(Color.GREEN);
+      // GridMap.cellDetails.forEach((k,v) -> {
+      //   if(v.isEmpty()) g2d.fillRect((k/100)*16, (k%100)*16, 16, 16);
+      // });
 
       /* draws the whole game grid image */
       scaledg2d.drawImage(gridImage,GridMap.offset[0],GridMap.offset[1],GridMap.size,GridMap.size,null);

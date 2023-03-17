@@ -6,86 +6,78 @@ import javax.imageio.ImageIO;
 
 public class PlayerSnake extends Snake {
   private KeyHandler keyH;
-  private double sprintSpeed;
-  /**
-   * keeping player from spamming
-   */
-  private int[] markCellPos;
+  private int sprintSpeed;
+  private Integer newFacing;
 
   public PlayerSnake(GridMap gridMap, KeyHandler keyH) {
     super(1);
-    normalSpeed = 4.0;
-    // normalSpeed = 0.0000001; // debug
-    sprintSpeed = 4.7;
-    facing = 3;
+    normalSpeed = 1;
+    sprintSpeed = 3;
     this.keyH = keyH;
-    markCellPos = new int[2];
   }
 
   @Override
   public void tick() {
-    if(keyH.movementIsHeld[facing]) {
-      curSpeed = sprintSpeed;
-    } else {
+    if(!keyH.movementIsHeld[0] && !keyH.movementIsHeld[1]
+      && !keyH.movementIsHeld[2] && !keyH.movementIsHeld[3])
       curSpeed = normalSpeed;
+    else if(!keyH.movementIsHeld[(facing+2)%4])
+      curSpeed = sprintSpeed;
+    newFacing = null;
+    if(keyH.movementIsHeld[0] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]
+    && facing != 2 && facing != 0) {
+      newFacing = 0;
     }
-    if(markCellPos[0] != headCellPos[0] || markCellPos[1] != headCellPos[1]) {
-      if(keyH.movementIsHeld[0] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]
-      && facing != 2 && facing != 0) {
-        facing = 0;
-        markCellPos[0] = headCellPos[0];
-        markCellPos[1] = headCellPos[1];
-      }
-
-      if(keyH.movementIsHeld[1] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]
-      && facing != 3 && facing != 1) {
-        facing = 1;
-        markCellPos[0] = headCellPos[0];
-        markCellPos[1] = headCellPos[1];
-      }
-      if(keyH.movementIsHeld[2] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]
-      && facing != 0 && facing != 2) {
-        facing = 2;
-        markCellPos[0] = headCellPos[0];
-        markCellPos[1] = headCellPos[1];
-      }
-      if(keyH.movementIsHeld[3] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]
-      && facing != 1 && facing != 3) {
-        facing = 3;
-        markCellPos[0] = headCellPos[0];
-        markCellPos[1] = headCellPos[1];
-      }
+    if(keyH.movementIsHeld[1] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]
+    && facing != 3 && facing != 1) {
+      newFacing = 1;
     }
-    super.tick();
+    if(keyH.movementIsHeld[2] && !keyH.movementIsHeld[1] && !keyH.movementIsHeld[3]
+    && facing != 0 && facing != 2) {
+      newFacing = 2;
+    }
+    if(keyH.movementIsHeld[3] && !keyH.movementIsHeld[0] && !keyH.movementIsHeld[2]
+    && facing != 1 && facing != 3) {
+      newFacing = 3;
+    }
+    if(newFacing != null && (facingQ.isEmpty()
+      || (facingQ.peekLast() % 2 != newFacing % 2))) {
+      facingQ.add(newFacing);
+    }
+    super.tick(); // lmao
   }
   
   @Override
   protected void initSnake() {
-    headX = GridMap.cellLayout[10][20][0];
+    headX = -16;
     headY = GridMap.cellLayout[10][20][1];
-    snakeList.add(new SnakeHead(facing, headSprite));
-    snakeList.add(new SnakeBody(headX-16, headY, facing, snakeList.get(snakeList.size()-1), bodySprite));
-    snakeList.add(new SnakeTail(headX-32, headY, facing, snakeList.get(snakeList.size()-1), tailSprite));
+    partList.add(new SnakeHead(facing, headSprite));
+    partList.add(new SnakeBody(headX, headY, facing, partList.get(partList.size()-1), bodySprite));
+    partList.add(new SnakeTail(headX, headY, facing, partList.get(partList.size()-1), tailSprite));
   }
   @Override
   protected void loadSprite() {
     try {
-      headSprite[0] = ImageIO.read(new File("sprites/snake/playerhead_up.png"));
-      headSprite[1] = ImageIO.read(new File("sprites/snake/playerhead_left.png"));
-      headSprite[2] = ImageIO.read(new File("sprites/snake/playerhead_down.png"));
-      headSprite[3] = ImageIO.read(new File("sprites/snake/playerhead_right.png"));
+      String folderName = "player";
+      headSprite[0] = ImageIO.read(new File(String.format("sprites/snake/%s/head_up.png",folderName)));
+      headSprite[1] = ImageIO.read(new File(String.format("sprites/snake/%s/head_left.png",folderName)));
+      headSprite[2] = ImageIO.read(new File(String.format("sprites/snake/%s/head_down.png",folderName)));
+      headSprite[3] = ImageIO.read(new File(String.format("sprites/snake/%s/head_right.png",folderName)));
 
-      bodySprite[0] = ImageIO.read(new File("sprites/snake/playerbody_vertical.png"));
-      bodySprite[1] = ImageIO.read(new File("sprites/snake/playerbody_horizontal.png"));
-      bodySprite[2] = ImageIO.read(new File("sprites/snake/playerbody_UL.png"));
-      bodySprite[3] = ImageIO.read(new File("sprites/snake/playerbody_UR.png"));
-      bodySprite[4] = ImageIO.read(new File("sprites/snake/playerbody_DL.png"));
-      bodySprite[5] = ImageIO.read(new File("sprites/snake/playerbody_DR.png"));
+      bodySprite[0] = ImageIO.read(new File(String.format("sprites/snake/%s/body_vertical.png",folderName)));
+      bodySprite[1] = ImageIO.read(new File(String.format("sprites/snake/%s/body_horizontal.png",folderName)));
 
-      tailSprite[0] = ImageIO.read(new File("sprites/snake/playertail_up.png"));
-      tailSprite[1] = ImageIO.read(new File("sprites/snake/playertail_left.png"));
-      tailSprite[2] = ImageIO.read(new File("sprites/snake/playertail_down.png"));
-      tailSprite[3] = ImageIO.read(new File("sprites/snake/playertail_right.png"));
+      for(int i = 0; i <= 7; i++) {
+        turnSprite[0][i] = ImageIO.read(new File(String.format("sprites/snake/%s/turn_UL%d.png",folderName,i)));
+        turnSprite[1][i] = ImageIO.read(new File(String.format("sprites/snake/%s/turn_UR%d.png",folderName,i)));
+        turnSprite[2][i] = ImageIO.read(new File(String.format("sprites/snake/%s/turn_DL%d.png",folderName,i)));
+        turnSprite[3][i] = ImageIO.read(new File(String.format("sprites/snake/%s/turn_DR%d.png",folderName,i)));
+      }
+
+      tailSprite[0] = ImageIO.read(new File(String.format("sprites/snake/%s/tail_up.png",folderName)));
+      tailSprite[1] = ImageIO.read(new File(String.format("sprites/snake/%s/tail_left.png",folderName)));
+      tailSprite[2] = ImageIO.read(new File(String.format("sprites/snake/%s/tail_down.png",folderName)));
+      tailSprite[3] = ImageIO.read(new File(String.format("sprites/snake/%s/tail_right.png",folderName)));
     } catch(IOException e) {
       e.printStackTrace();
     }

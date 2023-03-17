@@ -41,9 +41,13 @@ public class KeyHandler implements KeyListener {
     }
     switch(GamePanel.state) {
     case MENU: break;
+    case LOADING: break;
     case PLAYZONE:
       if(pressed == KeyEvent.VK_SEMICOLON) { // debug
         gp.player.grow(5);
+      }
+      if(pressed == KeyEvent.VK_SLASH) {
+        Score.addScore(5);
       }
       break;
     case PAUSE: break;
@@ -58,9 +62,10 @@ public class KeyHandler implements KeyListener {
     switch(GamePanel.state) {
     case MENU:
       if(released == KeyEvent.VK_ENTER) {
-        gp.load();
+        GamePanel.state = State.LOADING;
       }
       break;
+    case LOADING: break;
     case PAUSE:
       if(released == KeyEvent.VK_ESCAPE) {
         GamePanel.state = State.PLAYZONE;
