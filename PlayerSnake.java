@@ -57,25 +57,26 @@ public class PlayerSnake extends Snake {
   @Override
   protected void loadSprite() {
     try {
-      headSprite[0] = ImageIO.read(new File("sprites/snake/player/head_up.png"));
-      headSprite[1] = ImageIO.read(new File("sprites/snake/player/head_left.png"));
-      headSprite[2] = ImageIO.read(new File("sprites/snake/player/head_down.png"));
-      headSprite[3] = ImageIO.read(new File("sprites/snake/player/head_right.png"));
+      String folderName = "player";
+      headSprite[0] = ImageIO.read(new File(String.format("sprites/snake/%s/head_up.png",folderName)));
+      headSprite[1] = ImageIO.read(new File(String.format("sprites/snake/%s/head_left.png",folderName)));
+      headSprite[2] = ImageIO.read(new File(String.format("sprites/snake/%s/head_down.png",folderName)));
+      headSprite[3] = ImageIO.read(new File(String.format("sprites/snake/%s/head_right.png",folderName)));
 
-      bodySprite[0] = ImageIO.read(new File("sprites/snake/player/body_vertical.png"));
-      bodySprite[1] = ImageIO.read(new File("sprites/snake/player/body_horizontal.png"));
+      bodySprite[0] = ImageIO.read(new File(String.format("sprites/snake/%s/body_vertical.png",folderName)));
+      bodySprite[1] = ImageIO.read(new File(String.format("sprites/snake/%s/body_horizontal.png",folderName)));
 
       for(int i = 0; i <= 7; i++) {
-        turnSprite[0][i] = ImageIO.read(new File(String.format("sprites/snake/player/turn_UL%d.png",i)));
-        turnSprite[1][i] = ImageIO.read(new File(String.format("sprites/snake/player/turn_UR%d.png",i)));
-        turnSprite[2][i] = ImageIO.read(new File(String.format("sprites/snake/player/turn_DL%d.png",i)));
-        turnSprite[3][i] = ImageIO.read(new File(String.format("sprites/snake/player/turn_DR%d.png",i)));
+        turnSprite[0][i] = ImageIO.read(new File(String.format("sprites/snake/%s/turn_UL%d.png",folderName,i)));
+        turnSprite[1][i] = ImageIO.read(new File(String.format("sprites/snake/%s/turn_UR%d.png",folderName,i)));
+        turnSprite[2][i] = ImageIO.read(new File(String.format("sprites/snake/%s/turn_DL%d.png",folderName,i)));
+        turnSprite[3][i] = ImageIO.read(new File(String.format("sprites/snake/%s/turn_DR%d.png",folderName,i)));
       }
 
-      tailSprite[0] = ImageIO.read(new File("sprites/snake/player/tail_up.png"));
-      tailSprite[1] = ImageIO.read(new File("sprites/snake/player/tail_left.png"));
-      tailSprite[2] = ImageIO.read(new File("sprites/snake/player/tail_down.png"));
-      tailSprite[3] = ImageIO.read(new File("sprites/snake/player/tail_right.png"));
+      tailSprite[0] = ImageIO.read(new File(String.format("sprites/snake/%s/tail_up.png",folderName)));
+      tailSprite[1] = ImageIO.read(new File(String.format("sprites/snake/%s/tail_left.png",folderName)));
+      tailSprite[2] = ImageIO.read(new File(String.format("sprites/snake/%s/tail_down.png",folderName)));
+      tailSprite[3] = ImageIO.read(new File(String.format("sprites/snake/%s/tail_right.png",folderName)));
     } catch(IOException e) {
       e.printStackTrace();
     }
