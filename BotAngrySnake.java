@@ -3,11 +3,11 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class BotHungrySnake extends Snake {
+public class BotAngrySnake extends Snake {
 
-  private int[] targetedFood; // idk figure it out
+  private int[] targetedPos;
 
-  public BotHungrySnake(GridMap gridMap) {
+  public BotAngrySnake(GridMap gridMap) {
     super(2);
     facing = 1;
     normalSpeed = 1;

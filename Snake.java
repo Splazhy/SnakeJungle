@@ -89,7 +89,7 @@ public abstract class Snake {
       if(!(this instanceof PlayerSnake))
         Score.addScore(VALUE);
       SoundEffects.playBotsDeath();
-      GamePanel.hitboxList.removeAll(snakeHitbox);
+      GamePanel.hitboxList.removeAll(partHitbox);
       GamePanel.botList.remove(this);
     }
     for(int i = 0; i < partList.size(); i++) {
@@ -104,18 +104,11 @@ public abstract class Snake {
       }
     }
     if(isEating) {
-      if(this instanceof PlayerSnake)
-        Score.addScore(1);
-      grow(1);
-      isEating = false;
-      Apple.respawnApple();
-    }
-    if(isEating) {
       if(this instanceof PlayerSnake){
         Score.addScore(1);
         SoundEffects.playBitingSound();
       }
-      else{
+      else {
         SoundEffects.playBotEatingSound();
       }
       grow(1);

@@ -1,12 +1,11 @@
 import javax.sound.sampled.*;
-import java.io.IOException;
 
 import java.io.File;
 public class SoundEffects{
 
     public static void playMusic() {
         try {
-            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("sprites/SoundEffects/Ancient Jungle Ruins!-byHeatleyBros.wav"));
+            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("SoundEffects/Ancient Jungle Ruins!-byHeatleyBros.wav"));
             AudioFormat format = inputStream.getFormat();
             byte[] buffer = new byte[4096];
             int bytesRead = 0;
@@ -36,7 +35,7 @@ public class SoundEffects{
     public static void playBitingSound() {
         try {
             Clip clip = AudioSystem.getClip();
-            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("sprites/SoundEffects/biting-an-apple.wav"));
+            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("SoundEffects/biting-an-apple.wav"));
             clip.open(inputStream);
             clip.start(); 
           } catch (Exception e) {
@@ -47,7 +46,7 @@ public class SoundEffects{
     public static void playBotEatingSound(){
         try {
             Clip clip = AudioSystem.getClip();
-            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("sprites/SoundEffects/BotsEating.wav"));
+            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("SoundEffects/BotsEating.wav"));
             clip.open(inputStream);
             FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
             volume.setValue(+6.0f);
@@ -60,7 +59,7 @@ public class SoundEffects{
     public static void playGameOverSound(){
         try {
             Clip clip = AudioSystem.getClip();
-            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("sprites/SoundEffects/GAMEOVER-Sound.wav"));
+            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("SoundEffects/GAMEOVER-Sound.wav"));
             clip.open(inputStream);
             clip.start(); 
           } catch (Exception e) {
@@ -71,7 +70,7 @@ public class SoundEffects{
     public static void playBotsDeath(){
         try {
             Clip clip = AudioSystem.getClip();
-            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("sprites/SoundEffects/BotsDeath.wav"));
+            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("SoundEffects/BotsDeath.wav"));
             clip.open(inputStream);
             FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
             volume.setValue(+6.0f);
