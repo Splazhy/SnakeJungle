@@ -95,10 +95,10 @@ public class GamePanel extends JPanel implements Runnable {
       if(player.isAlive) {
         player.tick();
         apple.tick();
-        for(int i = 0; i < botList.size(); i++) {
-          botList.get(i).tick();
-        }
-        botSpawner.tick();
+        // for(int i = 0; i < botList.size(); i++) {
+        //   botList.get(i).tick();
+        // }
+        // botSpawner.tick();
       }
       else {
         hitboxList.clear();
