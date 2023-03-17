@@ -36,7 +36,6 @@ public class Apple {
         newAppleY = newPos%100;
         GridMap.cellDetails.get(newAppleX*100+newAppleY).add(hashCode);
     }
-
     
     protected void draw(Graphics2D g2d) {
       g2d.drawImage(appleImg, appleX, appleY, null);
@@ -44,12 +43,11 @@ public class Apple {
     }
 
     protected void tick(){
-        // respawnApple();
+
         appleX = GridMap.cellLayout[newAppleX][newAppleY][0];
         appleY = GridMap.cellLayout[newAppleX][newAppleY][1];
 
-        // appleX = GridMap.cellLayout[10][10][0];
-        // appleY = GridMap.cellLayout[10][10][1];
+        
         appleHitbox.setFrame(appleX+2, appleY+2, 10, 10);
         
     }
