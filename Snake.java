@@ -214,7 +214,7 @@ public abstract class Snake {
       }
       for(int i = 0; i < curSpeed; i++) {
         turnFrame = ++turnFrame % 8;
-        if(!facingQ.isEmpty() && headX % 16 == 0 && headY % 16 == 0) {
+        if(!facingQ.isEmpty() && headX % 16 == 0 && headY % 16 == 0 ) {
           int prevFacing = facing;
           facing = facingQ.poll();
           turnPointMap.put(headX*1000 + headY, prevFacing*10 + facing);
