@@ -1,16 +1,16 @@
 public class Node implements Comparable<Node>{
-    int xAxis;
-    int yAxis;
-    int gCost = 0;
+	int xAxis;
+	int yAxis;
+	int gCost = 0;
 	int hCost;
 	int fCost;
 	Node parent;
 	boolean walkable;
-    int direction = -1;
+	int direction = -1;
 
-    boolean Closed = false;
+	boolean Closed = false;
 
-    public Node(int xAxis, int yAxis, int gCost, int hCost) {
+	public Node(int xAxis, int yAxis, int gCost, int hCost) {
 		this.xAxis = xAxis;
 		this.yAxis = yAxis;
 		this.gCost = gCost;
@@ -18,19 +18,19 @@ public class Node implements Comparable<Node>{
 		calcFCost();
 	}
 
-    public int getDirection(){
-        return direction;
-    }
+	public int getDirection(){
+		return direction;
+	}
 
-    public void setDirection(int direction){
-        this.direction = direction;
-    }
+	public void setDirection(int direction){
+		this.direction = direction;
+	}
 
-    public Node getParent() {
+	public Node getParent() {
 		return parent;
 	}
 
-    public void setParent(Node parent) {
+	public void setParent(Node parent) {
 		if (direction == -1) {
 			if (parent.getxAxis() - this.xAxis > 0) {
 				direction = 1;
@@ -47,7 +47,7 @@ public class Node implements Comparable<Node>{
 		this.parent = parent;
 	}
 
-    public void setgCost(int gCost) {
+	public void setgCost(int gCost) {
 		this.gCost = gCost;
 		calcFCost();
 	}
@@ -60,7 +60,7 @@ public class Node implements Comparable<Node>{
 		return fCost;
 	}
 
-    @Override
+	@Override
 	public int compareTo(Node o) {
 		if (this.fCost > o.fCost)
 			return 1;

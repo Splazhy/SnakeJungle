@@ -3,18 +3,16 @@ import java.util.Queue;
 import java.util.Random;
 
 public class BotSpawner {
-  private GamePanel gp;
   private static Queue<Snake> botQueue;
   private Random rng;
   private long beginTime;
   private long targetTime;
 
-  protected BotSpawner(GamePanel gp) {
-    this.gp = gp;
+  protected BotSpawner() {
     botQueue = new LinkedList<>();
     rng = new Random();
     beginTime = System.nanoTime();
-    targetTime = (rng.nextInt(20)+30) * 1_000_000_000L;
+    targetTime = (rng.nextInt(10)+20) * 1_000_000_000L;
   }
 
   protected void spawn(Snake snake) {
@@ -23,9 +21,11 @@ public class BotSpawner {
 
   protected void tick() {
     if(System.nanoTime() - beginTime >= targetTime) {
-      botQueue.add(new BotHungrySnake(gp.gridMap));
+      int botNum = rng.nextInt(4)+1;
+      for(int i = 0; i < botNum; i++)
+        botQueue.add(new BotFrenzySnake());
       beginTime = System.nanoTime();
-      targetTime = (rng.nextInt(20)+30) * 1_000_000_000L;
+      targetTime = (rng.nextInt(10)+20) * 1_000_000_000L;
     }
     if(!botQueue.isEmpty())
       GamePanel.botList.add(botQueue.poll());

@@ -39,11 +39,9 @@ public class SoundPlayer {
       Clip clip = AudioSystem.getClip();
       AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("sound/PlayerEating.wav"));
       clip.open(inputStream);
-      // FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-      // volume.setValue(volumeVal);
-      long startTime = System.nanoTime();
+      FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+      volume.setValue(volumeVal);
       clip.start();
-      System.out.println(System.nanoTime() - startTime);
     } catch (Exception e) {
       System.err.println(e.getMessage());
     }

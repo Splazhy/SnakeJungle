@@ -99,7 +99,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     gridMap = new GridMap();
     player = new PlayerSnake(gridMap, keyH);
-    botSpawner = new BotSpawner(this);
+    botSpawner = new BotSpawner();
     apple = new Apple(gridMap);
 
     Score.restart();
@@ -150,12 +150,12 @@ public class GamePanel extends JPanel implements Runnable {
 
     if(state.screen == 1) {
       gridMap.draw(g2d);
-      player.draw(g2d);
-
       apple.draw(g2d);
-
+      
       for(Snake s : botList)
         s.draw(g2d);
+      
+      player.draw(g2d);
 
       if(isDebugging) {
         for(GameHitbox r : hitboxList) {

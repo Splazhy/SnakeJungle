@@ -8,7 +8,7 @@ import javax.imageio.ImageIO;
 public class Apple {
     protected static int appleX,appleY;
     protected static int newAppleX,newAppleY;
-    private static int hashCode;
+    protected static int hashCode;
     private BufferedImage appleImg;
     private static Random random;
     private static GameHitbox appleHitbox;

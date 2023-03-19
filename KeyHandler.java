@@ -76,6 +76,8 @@ public class KeyHandler implements KeyListener {
     case PLAYZONE:
       if(released == KeyEvent.VK_ESCAPE) {
         GamePanel.state = State.PAUSE;
+      } else if(released == KeyEvent.VK_P) {
+        gp.botSpawner.spawn(new BotFrenzySnake());
       }
       break;
     case GAMEOVER:

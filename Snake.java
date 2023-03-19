@@ -1,9 +1,9 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Deque;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -50,7 +50,7 @@ public abstract class Snake {
   protected int facing;
   protected Deque<Integer> facingQ;
   protected Random rng;
-  protected HashMap<Integer, Integer> turnPointMap;
+  protected ConcurrentHashMap<Integer, Integer> turnPointMap;
 
   protected BufferedImage[] headSprite;
   protected BufferedImage[] bodySprite;
@@ -73,7 +73,7 @@ public abstract class Snake {
     tailSprite = new BufferedImage[4];
     partList = new ArrayList<>();
     partHitbox = new LinkedList<>();
-    turnPointMap = new HashMap<>();
+    turnPointMap = new ConcurrentHashMap<>();
     rng = new Random();
     snakeHashCode = rng.hashCode();
     loadSprite();
@@ -86,15 +86,15 @@ public abstract class Snake {
 
   protected void tick() {
     if(!isAlive) {
-      if(!(this instanceof PlayerSnake)) {
+      if(!(this instanceof PlayerSnake))
         Score.addScore(VALUE);
-        GridMap.cellDetails.forEach((k,v) -> {
-          v.remove(snakeHashCode);
-        });
-      }
       SoundPlayer.playBotsDeath();
       GamePanel.hitboxList.removeAll(partHitbox);
       GamePanel.botList.remove(this);
+      GridMap.cellDetails.forEach((k,v) -> {
+        v.remove(snakeHashCode);
+      });
+      return;
     }
     for(int i = 0; i < partList.size(); i++) {
       partList.get(i).tick();
@@ -214,7 +214,7 @@ public abstract class Snake {
       }
       for(int i = 0; i < curSpeed; i++) {
         turnFrame = ++turnFrame % 8;
-        if(!facingQ.isEmpty() && headX % 16 == 0 && headY % 16 == 0 ) {
+        if(!facingQ.isEmpty() && headX % 16 == 0 && headY % 16 == 0) {
           int prevFacing = facing;
           facing = facingQ.poll();
           turnPointMap.put(headX*1000 + headY, prevFacing*10 + facing);

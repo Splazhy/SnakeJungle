@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
 import javax.imageio.ImageIO;
 import java.util.*;
 
@@ -9,7 +8,6 @@ public class BotHungrySnake extends Snake {
 
   static int[] targetedFood; // idk figure it out
   static int[] markCellPos;
-  private boolean isDown;
   int xDistance;
 	int yDistance;
   int direction;
@@ -19,7 +17,7 @@ public class BotHungrySnake extends Snake {
   int count;
   int numDirections;
 
-  public BotHungrySnake(GridMap gridMap) {
+  public BotHungrySnake() {
     super(2);
     facing = 3;
     normalSpeed = 1;
@@ -29,8 +27,6 @@ public class BotHungrySnake extends Snake {
     targetedFood[0] = Apple.appleX;
     targetedFood[1] = Apple.appleY;
     direction = facing;
-    
-
   }
 
   @Override
@@ -50,10 +46,13 @@ public class BotHungrySnake extends Snake {
 			  directions[i] = path.get(i).getDirection();
 		  }
     }
+    if(directions != null) {
       for(int direction : directions){
-        if(directions != null && (facingQ.isEmpty()|| (facingQ.peekLast() % 2 != direction % 2))) {
+        if(facingQ.isEmpty() || (facingQ.peekLast() % 2 != direction % 2)) {
           facingQ.add(direction);
-      } 
+          break;
+        } 
+      }
     }
     
     
