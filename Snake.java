@@ -86,8 +86,12 @@ public abstract class Snake {
 
   protected void tick() {
     if(!isAlive) {
-      if(!(this instanceof PlayerSnake))
+      if(!(this instanceof PlayerSnake)) {
         Score.addScore(VALUE);
+        GridMap.cellDetails.forEach((k,v) -> {
+          v.remove(snakeHashCode);
+        });
+      }
       SoundPlayer.playBotsDeath();
       GamePanel.hitboxList.removeAll(partHitbox);
       GamePanel.botList.remove(this);
@@ -106,9 +110,7 @@ public abstract class Snake {
     if(isEating) {
       if(this instanceof PlayerSnake){
         Score.addScore(1);
-        long startTime = System.nanoTime();
         SoundPlayer.playBitingSound();
-        System.out.println(System.nanoTime() - startTime);
       }
       else {
         SoundPlayer.playBotEatingSound();

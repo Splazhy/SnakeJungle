@@ -1,5 +1,4 @@
 import java.util.Random;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.io.IOException;

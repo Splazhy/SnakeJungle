@@ -1,34 +1,32 @@
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 
 public class BotSpawner {
   private GamePanel gp;
   private static Queue<Snake> botQueue;
-  private int scoreIncreased;
-  private int lastScore;
+  private Random rng;
+  private long beginTime;
+  private long targetTime;
 
   protected BotSpawner(GamePanel gp) {
     this.gp = gp;
     botQueue = new LinkedList<>();
-    scoreIncreased = 0;
-    lastScore = 0;
+    rng = new Random();
+    beginTime = System.nanoTime();
+    targetTime = (rng.nextInt(20)+30) * 1_000_000_000L;
   }
 
-  protected void enqueue(Snake snake) {
+  protected void spawn(Snake snake) {
     botQueue.add(snake);
   }
 
   protected void tick() {
-    scoreIncreased += Score.getCurScore() - lastScore;
-    if(scoreIncreased >= 10) {
+    if(System.nanoTime() - beginTime >= targetTime) {
       botQueue.add(new BotHungrySnake(gp.gridMap));
-      scoreIncreased = 0;
+      beginTime = System.nanoTime();
+      targetTime = (rng.nextInt(20)+30) * 1_000_000_000L;
     }
-    addBot();
-    lastScore = Score.getCurScore();
-  }
-  
-  protected static void addBot() {
     if(!botQueue.isEmpty())
       GamePanel.botList.add(botQueue.poll());
   }

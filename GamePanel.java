@@ -3,8 +3,8 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -22,8 +22,8 @@ public class GamePanel extends JPanel implements Runnable {
   protected int audioIconIdx;
   private Thread gameThread;
 
-  protected static List<GameHitbox> hitboxList;
-  protected static List<Snake> botList;
+  protected static ArrayList<GameHitbox> hitboxList;
+  protected static CopyOnWriteArrayList<Snake> botList;
   protected GridMap gridMap;
   protected PlayerSnake player;
   protected BotSpawner botSpawner;
@@ -33,8 +33,8 @@ public class GamePanel extends JPanel implements Runnable {
     keyH = new KeyHandler(this);
     graphicUI = new GraphicUI(this);
     
-    hitboxList = new LinkedList<>();
-    botList = new LinkedList<>();
+    hitboxList = new ArrayList<>();
+    botList = new CopyOnWriteArrayList<>();
 
     audioSlider = new JSlider(JSlider.VERTICAL, 1, 10000, 10000);
     audioIconIdx = 3;
@@ -126,10 +126,10 @@ public class GamePanel extends JPanel implements Runnable {
       if(player.isAlive) {
         player.tick();
         apple.tick();
-        // for(int i = 0; i < botList.size(); i++) {
-        //   botList.get(i).tick();
-        // }
-        // botSpawner.tick();
+        for(Snake s : botList) {
+          s.tick();
+        }
+        botSpawner.tick();
       }
       else {
         SoundPlayer.playGameOverSound();

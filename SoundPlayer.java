@@ -1,11 +1,11 @@
 import javax.sound.sampled.*;
 import java.io.File;
 
-// FIXME: clip.start() stutterring problem
+// LOOKOUT: SoundPlayer stutters randomly
 public class SoundPlayer {
 
   protected static float volumeVal = 0.0f;
-  
+
   public static void playMusic() {
     try {
       AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("sound/Ancient Jungle Ruins!-byHeatleyBros.wav"));
@@ -39,8 +39,8 @@ public class SoundPlayer {
       Clip clip = AudioSystem.getClip();
       AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("sound/PlayerEating.wav"));
       clip.open(inputStream);
-      FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-      volume.setValue(volumeVal);
+      // FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+      // volume.setValue(volumeVal);
       long startTime = System.nanoTime();
       clip.start();
       System.out.println(System.nanoTime() - startTime);
