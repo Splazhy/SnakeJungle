@@ -44,7 +44,7 @@ public class PlayerSnake extends Snake {
       || (facingQ.peekLast() % 2 != newFacing % 2))) {
       facingQ.add(newFacing);
     }
-    super.tick(); // lmao
+    super.tick();
   }
   
   @Override

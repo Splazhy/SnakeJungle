@@ -38,8 +38,7 @@ public class Apple {
     }
     
     protected void draw(Graphics2D g2d) {
-      g2d.drawImage(appleImg, appleX, appleY, null);
-
+        g2d.drawImage(appleImg, appleX, appleY, null);
     }
 
     protected void tick(){
