@@ -57,6 +57,8 @@ public class GraphicUI {
         g2d.drawString(Arrays.toString(gp.player.headCellPos),100, 150); // debug
         g2d.drawString(gp.player.toString(), 100, 200); // debug
         g2d.drawString(gp.player.facingQ.toString(), 300, 200); // debug
+        g2d.drawString(Arrays.toString(BotHungrySnake.markCellPos),100, 300);
+        g2d.drawString(Arrays.toString(BotHungrySnake.targetedFood),100, 400);
         g2d.setFont(normalFont);
 
         // draws gameplay UI here

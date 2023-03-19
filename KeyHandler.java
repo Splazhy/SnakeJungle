@@ -97,5 +97,8 @@ public class KeyHandler implements KeyListener {
     if(released == KeyEvent.VK_D) {
       movementIsHeld[3] = false;
     }
+    if(released == KeyEvent.VK_F3) {
+      GamePanel.isDebugging = !GamePanel.isDebugging;
+    }
   }
 }

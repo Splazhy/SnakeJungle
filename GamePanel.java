@@ -12,6 +12,7 @@ import javax.swing.plaf.ColorUIResource;
 public class GamePanel extends JPanel implements Runnable {
   private static final int FPS = 60;
   protected static State state;
+  protected static boolean isDebugging = false;
   private KeyHandler keyH;
   private GraphicUI graphicUI;
   private Thread gameThread;
@@ -127,13 +128,20 @@ public class GamePanel extends JPanel implements Runnable {
 
       for(Snake s : botList)
         s.draw(g2d);
-      // g2d.setColor(Color.RED);
-      // for(GameHitbox r : hitboxList) // debug
-      //   g2d.draw(r);
-      // g2d.setColor(Color.GREEN);
-      // GridMap.cellDetails.forEach((k,v) -> {
-      //   if(v.isEmpty()) g2d.fillRect((k/100)*16, (k%100)*16, 16, 16);
-      // });
+      
+      if(isDebugging) {
+          for(GameHitbox r : hitboxList) {
+            if(r.ID > 0)
+              g2d.setColor(Color.red);
+            else
+              g2d.setColor(Color.blue);
+            g2d.draw(r);
+          }
+          g2d.setColor(new Color(0, 255, 0, 50));
+          GridMap.cellDetails.forEach((k,v) -> {
+            if(v.isEmpty()) g2d.fillRect((k/100)*16, (k%100)*16, 16, 16);
+          });
+      }
 
       /* draws the whole game grid image */
       scaledg2d.drawImage(gridImage,GridMap.offset[0],GridMap.offset[1],GridMap.size,GridMap.size,null);
