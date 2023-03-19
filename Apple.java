@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.io.IOException;
@@ -38,8 +39,7 @@ public class Apple {
     }
     
     protected void draw(Graphics2D g2d) {
-      g2d.drawImage(appleImg, appleX, appleY, null);
-
+        g2d.drawImage(appleImg, appleX, appleY, null);
     }
 
     protected void tick(){

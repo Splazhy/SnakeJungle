@@ -88,7 +88,7 @@ public abstract class Snake {
     if(!isAlive) {
       if(!(this instanceof PlayerSnake))
         Score.addScore(VALUE);
-      SoundEffects.playBotsDeath();
+      SoundPlayer.playBotsDeath();
       GamePanel.hitboxList.removeAll(partHitbox);
       GamePanel.botList.remove(this);
     }
@@ -106,10 +106,12 @@ public abstract class Snake {
     if(isEating) {
       if(this instanceof PlayerSnake){
         Score.addScore(1);
-        SoundEffects.playBitingSound();
+        long startTime = System.nanoTime();
+        SoundPlayer.playBitingSound();
+        System.out.println(System.nanoTime() - startTime);
       }
       else {
-        SoundEffects.playBotEatingSound();
+        SoundPlayer.playBotEatingSound();
       }
       grow(1);
       isEating = false;
@@ -118,7 +120,7 @@ public abstract class Snake {
   }
 
   protected void draw(Graphics2D g2d) {
-    for(int i = 0; i < partList.size(); i++) {
+    for(int i = 1; i < partList.size(); i++) {
       partList.get(i).draw(g2d);
     }
     g2d.setColor(Color.MAGENTA);
@@ -133,7 +135,12 @@ public abstract class Snake {
         g2d.drawImage(turnSprite[turnCase][turnFrame], k/1000, k%1000, g2d.getColor(), null);
       else
         g2d.drawImage(turnSprite[turnCase%4][7-turnFrame], k/1000, k%1000, g2d.getColor(), null);
+      if(GamePanel.isDebugging) {
+        g2d.setColor(Color.magenta);
+        g2d.drawRect(k/1000, k%1000, 16, 16);
+      }
     });
+    partList.get(0).draw(g2d);
   }
 
   protected void grow(int n) {
@@ -334,6 +341,7 @@ public abstract class Snake {
   }
 
   protected class SnakeTail extends SnakePart {
+    private int[] altCellPos;
     private BufferedImage[] sprite;
 
     protected SnakeTail(int x, int y, int facing, SnakePart followee, BufferedImage[] spriteArr) {
@@ -381,7 +389,8 @@ public abstract class Snake {
               break;
           }
           subCellPos = getCellPos(x, y, subFacing);
-          GridMap.cellDetails.get(subCellPos[0]*100+subCellPos[1]).remove(snakeHashCode);
+          altCellPos = getTrailingCellPos(subCellPos, subFacing);
+          GridMap.cellDetails.get(altCellPos[0]*100+altCellPos[1]).remove(snakeHashCode);
         }
         hitbox.setFrame(x+2, y+2, 10, 10);
       } else if(dist < 1) {
@@ -402,6 +411,24 @@ public abstract class Snake {
         g2d.drawImage(sprite[subFacing], x, y-GridMap.GRID_PIXELS, null);
 
         g2d.drawImage(sprite[subFacing], x, y+GridMap.GRID_PIXELS, null);
+      }
+    }
+
+    private int[] getTrailingCellPos(int[] cellPos, int facing) {
+      int x = cellPos[0], y = cellPos[1];
+      switch(facing) {
+        case 0:
+          y = (y < 39) ? y+1 : 0;
+          return new int[] {x, y};
+        case 1:
+          x = (x < 39) ? x+1 : 0;
+          return new int[] {x, y};
+        case 2:
+          y = (y > 0) ? y-1 : 39;
+          return new int[] {x, y};
+        default:
+          x = (x > 0) ? x-1 : 39;
+          return new int[] {x, y};
       }
     }
   }

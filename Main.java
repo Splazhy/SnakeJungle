@@ -1,5 +1,5 @@
-import java.io.IOException;
 import javax.swing.JFrame;
+
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
@@ -8,7 +8,7 @@ public class Main extends JFrame {
   protected static int height;
   private GamePanel gamePanel;
 
-  public Main() throws IOException {
+  public Main() {
 
     gamePanel = new GamePanel();
     add(gamePanel);
@@ -24,7 +24,6 @@ public class Main extends JFrame {
         gamePanel.updatePanel();
       }
     });
-    setIgnoreRepaint(true);
     setTitle("Snake Jungle (alpha)");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     pack();
@@ -35,7 +34,7 @@ public class Main extends JFrame {
     gamePanel.start();
   }
 
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) {
     new Main();
     System.out.println(System.getProperty("os.name"));
   }
