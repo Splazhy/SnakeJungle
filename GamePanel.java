@@ -138,6 +138,8 @@ public class GamePanel extends JPanel implements Runnable {
     } else if(state == State.LOADING) {
       repaint();
       load();
+    } else if(state == State.PAUSE) {
+      botSpawner.tick();
     }
   }
 

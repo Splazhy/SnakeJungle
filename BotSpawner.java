@@ -12,7 +12,7 @@ public class BotSpawner {
     botQueue = new LinkedList<>();
     rng = new Random();
     beginTime = System.nanoTime();
-    targetTime = (rng.nextInt(10)+20) * 1_000_000_000L;
+    targetTime = (rng.nextInt(20)+20) * 1_000_000_000L;
   }
 
   protected void spawn(Snake snake) {
@@ -20,12 +20,15 @@ public class BotSpawner {
   }
 
   protected void tick() {
+    if(GamePanel.state == State.PAUSE) {
+      beginTime = System.nanoTime();
+    }
     if(System.nanoTime() - beginTime >= targetTime) {
-      int botNum = rng.nextInt(4)+1;
+      int botNum = rng.nextInt(3)+1;
       for(int i = 0; i < botNum; i++)
         botQueue.add(new BotFrenzySnake());
       beginTime = System.nanoTime();
-      targetTime = (rng.nextInt(10)+20) * 1_000_000_000L;
+      targetTime = (rng.nextInt(20)+20) * 1_000_000_000L;
     }
     if(!botQueue.isEmpty())
       GamePanel.botList.add(botQueue.poll());
