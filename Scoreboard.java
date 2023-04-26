@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.File;
@@ -10,12 +9,10 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class Scoreboard {
-    private String filepath;
     private static HashMap<String, Profile> scoreboard;
     private static ArrayList<Profile> leaderboard;
 
     public Scoreboard(String filepath) {
-        this.filepath = filepath;
         scoreboard = new HashMap<>();
         leaderboard = new ArrayList<>();
         try {
@@ -43,7 +40,7 @@ public class Scoreboard {
 
     public static Profile getToBeat(String self) {
         int idx = leaderboard.indexOf(scoreboard.get(self));
-        return (idx != -1) ? leaderboard.get(idx-1) : null;
+        return (idx != 0) ? leaderboard.get(idx-1) : null;
     }
 
     public boolean hasName(String name) {
