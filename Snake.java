@@ -82,6 +82,33 @@ public abstract class Snake {
     headCellPos = getCellPos(headX, headY, facing);
   }
 
+  public Snake(int ID, int set_facing, int set_headX, int set_headY) {
+    this.ID = ID;
+    value = 5;
+    normalSpeed = 1;
+    curSpeed = normalSpeed;
+    facing = set_facing;
+    headX = set_headX;
+    headY = set_headY;
+    facingQ = new LinkedList<>();
+    turnFrame = 0;
+    deathAnimationInterval = 0;
+    isAlive = true;
+    isEating = false;
+    headSprite = new BufferedImage[4];
+    bodySprite = new BufferedImage[2];
+    turnSprite = new BufferedImage[4][8];
+    tailSprite = new BufferedImage[4];
+    partList = new ArrayList<>();
+    partHitbox = new LinkedList<>();
+    turnPointMap = new HashMap<>();
+    rng = new Random();
+    snakeHashCode = rng.hashCode();
+    loadSprite();
+    initSnake();
+    headCellPos = getCellPos(headX, headY, facing);
+  }
+
   protected abstract void initSnake();
   protected abstract void loadSprite();
 

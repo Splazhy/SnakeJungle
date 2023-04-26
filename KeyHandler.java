@@ -62,7 +62,8 @@ public class KeyHandler implements KeyListener {
     switch(GamePanel.state) {
     case MENU:
       if(released == KeyEvent.VK_ENTER) {
-        GamePanel.state = State.LOADING;
+        if(gp.nameField.getText().matches("^[a-zA-Z]{2,}$"))
+          GamePanel.state = State.LOADING;
       }
       break;
     case LOADING: break;
@@ -76,8 +77,6 @@ public class KeyHandler implements KeyListener {
     case PLAYZONE:
       if(released == KeyEvent.VK_ESCAPE) {
         GamePanel.state = State.PAUSE;
-      } else if(released == KeyEvent.VK_P) {
-        gp.botSpawner.spawn(new BotFrenzySnake());
       }
       break;
     case GAMEOVER:

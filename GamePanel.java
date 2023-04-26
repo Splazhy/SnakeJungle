@@ -1,6 +1,10 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.LinkedList;
@@ -9,6 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ColorUIResource;
@@ -19,6 +24,11 @@ public class GamePanel extends JPanel implements Runnable {
   protected static boolean isDebugging = false;
   private KeyHandler keyH;
   private GraphicUI graphicUI;
+
+  private Scoreboard scoreboard;
+  protected static String playerName;
+
+  protected JTextField nameField;
   protected JSlider audioSlider;
   protected int audioIconIdx;
   private Thread gameThread;
@@ -37,11 +47,24 @@ public class GamePanel extends JPanel implements Runnable {
   public GamePanel() {
     keyH = new KeyHandler(this);
     graphicUI = new GraphicUI(this);
+
+    scoreboard = new Scoreboard("scoreboard.txt");
     
     hitboxList = new CopyOnWriteArrayList<>();
     botList = new CopyOnWriteArrayList<>();
 
+    nameField = new JTextField();
+    nameField.addKeyListener(keyH);
+    nameField.setHorizontalAlignment(JTextField.CENTER);
+    nameField.setForeground(Color.white);
+    nameField.setBackground(new Color(13, 18, 21));
+    nameField.setCaretColor(Color.white);
+    nameField.setFocusable(true);
+    nameField.setFont(GraphicUI.normalFont);
+    add(nameField);
+
     audioSlider = new JSlider(JSlider.VERTICAL, 1, 10000, 10000);
+    audioSlider.setBackground(null);
     audioIconIdx = 3;
     audioSlider.addChangeListener(new ChangeListener() {
       @Override
@@ -96,10 +119,16 @@ public class GamePanel extends JPanel implements Runnable {
 
   protected void load() {
     // System.out.println("lesss go!"); // debug
+    nameField.setVisible(false);
     audioSlider.setVisible(false);
 
     hitboxList.clear();
     botList.clear();
+
+    playerName = nameField.getText();
+    if(!scoreboard.hasName(playerName)) {
+      scoreboard.addNewProfile(playerName);
+    }
 
     gridImage = new BufferedImage(640, 640, BufferedImage.TYPE_INT_ARGB);
     g2d = gridImage.createGraphics();
@@ -123,10 +152,13 @@ public class GamePanel extends JPanel implements Runnable {
     botRemoveQueue = null;
     apple = null;
 
+    scoreboard.save("scoreboard.txt");
+
     hitboxList.clear();
     botList.clear();
     
     setBackground(new ColorUIResource(24, 34, 40));
+    nameField.setVisible(true);
     audioSlider.setVisible(true);
     state = State.MENU;
   }
@@ -152,7 +184,7 @@ public class GamePanel extends JPanel implements Runnable {
     } else if(state == State.LOADING) {
       repaint();
       load();
-    } else if(state == State.PAUSE) {
+    } else if(state == State.PAUSE && botSpawner != null) {
       botSpawner.tick();
     }
   }
@@ -167,7 +199,7 @@ public class GamePanel extends JPanel implements Runnable {
       apple.draw(g2d);
       
       for(Snake bot : botList)
-      bot.draw(g2d);
+        bot.draw(g2d);
       
       player.draw(g2d);
 
@@ -191,6 +223,7 @@ public class GamePanel extends JPanel implements Runnable {
       scaledg2d.drawImage(gridImage,GridMap.offset[0],GridMap.offset[1],GridMap.size,GridMap.size,null);
     }
     
+    scoreboard.drawLeaderBoard(scaledg2d);
     graphicUI.drawUI(scaledg2d);
 
   }
@@ -198,6 +231,7 @@ public class GamePanel extends JPanel implements Runnable {
   protected void updatePanel() {
     if(gridMap != null)
       gridMap.update();
+    nameField.setBounds((Main.width/2)-30, (int)(Main.height/1.75), 200, 50);
     audioSlider.setBounds(Main.width/20, (int)(Main.height/1.8), Main.width/20, Main.height/3);
   }
 }

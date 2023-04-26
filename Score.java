@@ -1,18 +1,22 @@
 
 public class Score {
-    private static int maxScore = HighScore.getHighScore();
-    private static int curScore = 0;
+    private static int maxScore;
+    private static int curScore;
 
     protected static void addScore(int score){
         curScore += score;
         if (maxScore < curScore) {
             maxScore = curScore;
-            HighScore.setHighScore(maxScore);
+            Scoreboard.getProfile(GamePanel.playerName).setHighScore(maxScore);
+            if(Scoreboard.getToBeat(GamePanel.playerName) != null 
+            && maxScore > Scoreboard.getToBeat(GamePanel.playerName).getHighScore()) {
+                Scoreboard.overtake(GamePanel.playerName);
+            }
         }
     }
 
     protected static void restart() {
-        maxScore = HighScore.getHighScore();
+        maxScore = Scoreboard.getProfile(GamePanel.playerName).getHighScore();
         curScore = 0;
     }
     protected static void reset() {

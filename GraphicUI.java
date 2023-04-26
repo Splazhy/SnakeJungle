@@ -12,8 +12,8 @@ import javax.swing.plaf.ColorUIResource;
 
 public class GraphicUI {
   private GamePanel gp;
-  private Font titleFont;
-  private Font normalFont;
+  public static Font titleFont;
+  public static Font normalFont;
 
   private BufferedImage[] audioIcon;
 
@@ -46,6 +46,8 @@ public class GraphicUI {
       g2d.drawString("press ENTER to play!"
       ,getCenteredX("press ENTER to play!", g2d), Main.height-(Main.height/4));
       g2d.drawImage(audioIcon[gp.audioIconIdx], Main.width/17, (int)(Main.height/1.12d), Main.width/30, (Main.width/30 * 24)/31, null);
+      g2d.setColor(Color.white);
+      g2d.drawString("Your name:", gp.nameField.getX()-140, gp.nameField.getY()+gp.nameField.getFont().getSize()+4);
       break;
 
     case LOADING:

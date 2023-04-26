@@ -7,8 +7,8 @@ public class BotFrenzySnake extends Snake {
 
   private int[] targetedPos;
 
-  public BotFrenzySnake() {
-    super(3);
+  public BotFrenzySnake(int set_facing, int set_headX, int set_headY) {
+    super(3, set_facing, set_headX, set_headY);
     normalSpeed = 1;
     curSpeed = normalSpeed;
     value = 5;
@@ -69,30 +69,12 @@ public class BotFrenzySnake extends Snake {
   
   @Override
   protected void initSnake() {
-    facing = rng.nextInt(4);
-    switch(facing) {
-      case 0:
-        headX = GridMap.cellLayout[rng.nextInt(40)][0][0];
-        headY = 624;
-        break;
-      case 1:
-        headX = 624;
-        headY = GridMap.cellLayout[0][rng.nextInt(40)][1];
-        break;
-      case 2:
-        headX = GridMap.cellLayout[rng.nextInt(40)][0][0];
-        headY = 0;
-        break;
-      case 3:
-        headX = 0;
-        headY = GridMap.cellLayout[0][rng.nextInt(40)][1];
-        break;
-    }
     partList.add(new SnakeHead(facing, headSprite));
     partList.add(new SnakeBody(headX, headY, facing, partList.get(partList.size()-1), bodySprite));
     partList.add(new SnakeTail(headX, headY, facing, partList.get(partList.size()-1), tailSprite));
     grow(rng.nextInt(30));
   }
+
   @Override
   protected void loadSprite() {
     try {
