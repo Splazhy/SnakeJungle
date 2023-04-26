@@ -112,7 +112,4 @@ public class Node implements Comparable<Node>{
 	public int getgCost() {
 		return gCost;
 	}
-
-
-
 }

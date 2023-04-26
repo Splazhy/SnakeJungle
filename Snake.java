@@ -1,9 +1,10 @@
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Deque;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -20,7 +21,7 @@ public abstract class Snake {
   /**
    * score to add when certain snake died
    */
-  protected int VALUE;
+  protected int value;
   /**
    * Head position (top-left point)<p>
    * ตำแหน่งซ้ายบนของหัวงู
@@ -29,11 +30,10 @@ public abstract class Snake {
   protected int curSpeed;
   protected int normalSpeed;
   protected int turnFrame;
+  private int deathAnimationInterval;
   protected boolean isAlive;
+  protected boolean isDying;
   protected boolean isEating;
-  /**
-   * 
-   */
   protected ArrayList<SnakePart> partList;
   private List<GameHitbox> partHitbox;
   /**
@@ -50,7 +50,7 @@ public abstract class Snake {
   protected int facing;
   protected Deque<Integer> facingQ;
   protected Random rng;
-  protected ConcurrentHashMap<Integer, Integer> turnPointMap;
+  protected HashMap<Integer, Integer> turnPointMap;
 
   protected BufferedImage[] headSprite;
   protected BufferedImage[] bodySprite;
@@ -59,12 +59,13 @@ public abstract class Snake {
 
   public Snake(int ID) {
     this.ID = ID;
-    VALUE = 5;
+    value = 5;
     normalSpeed = 1;
     curSpeed = normalSpeed;
     facing = 3;
     facingQ = new LinkedList<>();
     turnFrame = 0;
+    deathAnimationInterval = 0;
     isAlive = true;
     isEating = false;
     headSprite = new BufferedImage[4];
@@ -73,7 +74,7 @@ public abstract class Snake {
     tailSprite = new BufferedImage[4];
     partList = new ArrayList<>();
     partHitbox = new LinkedList<>();
-    turnPointMap = new ConcurrentHashMap<>();
+    turnPointMap = new HashMap<>();
     rng = new Random();
     snakeHashCode = rng.hashCode();
     loadSprite();
@@ -86,14 +87,19 @@ public abstract class Snake {
 
   protected void tick() {
     if(!isAlive) {
-      if(!(this instanceof PlayerSnake))
-        Score.addScore(VALUE);
-      SoundPlayer.playBotsDeath();
-      GamePanel.hitboxList.removeAll(partHitbox);
-      GamePanel.botList.remove(this);
-      GridMap.cellDetails.forEach((k,v) -> {
-        v.remove(snakeHashCode);
-      });
+      if(!isDying) {
+        Score.addScore(value);
+        SoundPlayer.playBotsDeath();
+        GamePanel.botPartRemoveQueue.addAll(partHitbox);
+        GridMap.cellDetails.forEach((k,v) -> {
+          v.remove(snakeHashCode);
+        });
+        isDying = true;
+      } else {
+        ++deathAnimationInterval;
+        if(deathAnimationInterval > 50)
+          GamePanel.botRemoveQueue.add(this);
+      }
       return;
     }
     for(int i = 0; i < partList.size(); i++) {
@@ -102,7 +108,7 @@ public abstract class Snake {
     for(GameHitbox r : GamePanel.hitboxList) {
       if(!r.equals(partHitbox.get(0)) && partHitbox.get(0).intersects(r.getBounds2D()) && r.ID > 0) {
         isAlive = false;
-        VALUE = (r.ID == 1) ? VALUE : 0;
+        value = (r.ID == 1) ? value : 0;
       } else if(!r.equals(partHitbox.get(0)) && partHitbox.get(0).intersects(r.getBounds2D()) && r.ID < 0){
         isEating = true;
       }
@@ -122,27 +128,32 @@ public abstract class Snake {
   }
 
   protected void draw(Graphics2D g2d) {
-    for(int i = 1; i < partList.size(); i++) {
-      partList.get(i).draw(g2d);
-    }
-    g2d.setColor(Color.MAGENTA);
-    turnPointMap.forEach((k, v) -> {
-      int turnCase = (v == 30) ? 0 : (v == 23) ? 1 : (v == 1) ? 2
-      : (v == 12) ? 3 : (v == 21) ? 4 : (v == 10) ? 5 : (v == 32) ? 6 : 7;
-      if(((k/1000)/16) % 2 == 0 ^ ((k%1000)/16) % 2 == 0)
-        g2d.setColor(new Color(28, 43, 52));
-      else
-        g2d.setColor(new Color(24, 34, 40));
-      if(turnCase < 4)
-        g2d.drawImage(turnSprite[turnCase][turnFrame], k/1000, k%1000, g2d.getColor(), null);
-      else
-        g2d.drawImage(turnSprite[turnCase%4][7-turnFrame], k/1000, k%1000, g2d.getColor(), null);
-      if(GamePanel.isDebugging) {
-        g2d.setColor(Color.magenta);
-        g2d.drawRect(k/1000, k%1000, 16, 16);
+    if(deathAnimationInterval % 10 < 5) {
+      for(int i = 1; i < partList.size(); i++) {
+        partList.get(i).draw(g2d);
       }
-    });
-    partList.get(0).draw(g2d);
+      try {
+        turnPointMap.forEach((k, v) -> {
+          int turnCase = (v == 30) ? 0 : (v == 23) ? 1 : (v == 1) ? 2
+          : (v == 12) ? 3 : (v == 21) ? 4 : (v == 10) ? 5 : (v == 32) ? 6 : 7;
+          if(((k/1000)/16) % 2 == 0 ^ ((k%1000)/16) % 2 == 0)
+            g2d.setColor(new Color(28, 43, 52));
+          else
+            g2d.setColor(new Color(24, 34, 40));
+          if(turnCase < 4)
+            g2d.drawImage(turnSprite[turnCase][turnFrame], k/1000, k%1000, g2d.getColor(), null);
+          else
+            g2d.drawImage(turnSprite[turnCase%4][7-turnFrame], k/1000, k%1000, g2d.getColor(), null);
+          if(GamePanel.isDebugging) {
+            g2d.setColor(Color.magenta);
+            g2d.drawRect(k/1000, k%1000, 16, 16);
+          }
+        });
+      } catch(ConcurrentModificationException e) {
+        return;
+      }
+      partList.get(0).draw(g2d);
+    }
   }
 
   protected void grow(int n) {
@@ -156,7 +167,7 @@ public abstract class Snake {
     }
   }
 
-  private int[] getCellPos(int x, int y, int tmpFacing) {
+  protected static int[] getCellPos(int x, int y, int tmpFacing) {
     switch(tmpFacing) {
       case 0: case 1:
         return new int[] {(x/16) % 40, (y/16) % 40};
@@ -281,15 +292,9 @@ public abstract class Snake {
         drawWrap = (x >= 0 && y >= 0 && x <= 624 && y <= 624) ?
         true : false;
       }
-      int dist = Math.min(Math.abs(followee.x - x) + Math.abs(followee.y - y)
-      , Math.min(Math.abs(followee.x - (x+640)) + Math.abs(followee.y - y)
-      , Math.min(Math.abs(followee.x - (x-640)) + Math.abs(followee.y - y)
-      , Math.min(Math.abs(followee.x - x) + Math.abs(followee.y - (y+640))
-      , Math.min(Math.abs(followee.x - x) + Math.abs(followee.y - (y-640))
-      , Math.min(Math.abs(followee.x - (x-640)) + Math.abs(followee.y - (y-640))
-      , Math.min(Math.abs(followee.x - (x+640)) + Math.abs(followee.y - (y-640))
-      , Math.min(Math.abs(followee.x - (x-640)) + Math.abs(followee.y - (y+640))
-      , Math.abs(followee.x - (x+640)) + Math.abs(followee.y - (y+640))))))))));
+      int dx = Math.abs(followee.x - x);
+      int dy = Math.abs(followee.y - y);
+      int dist = Math.min(dx, 640 - dx) + Math.min(dy, 640 - dy);
       if(dist > 16) {
         for(int i = 0; i < (dist-16); i++) {
           if(turnPointMap.containsKey(x*1000 + y)) {
@@ -357,15 +362,9 @@ public abstract class Snake {
         drawWrap = (x >= 0 && y >= 0 && x <= 624 && y <= 624) ?
         true : false;
       }
-      int dist = Math.min(Math.abs(followee.x - x) + Math.abs(followee.y - y)
-      , Math.min(Math.abs(followee.x - (x+640)) + Math.abs(followee.y - y)
-      , Math.min(Math.abs(followee.x - (x-640)) + Math.abs(followee.y - y)
-      , Math.min(Math.abs(followee.x - x) + Math.abs(followee.y - (y+640))
-      , Math.min(Math.abs(followee.x - x) + Math.abs(followee.y - (y-640))
-      , Math.min(Math.abs(followee.x - (x-640)) + Math.abs(followee.y - (y-640))
-      , Math.min(Math.abs(followee.x - (x+640)) + Math.abs(followee.y - (y-640))
-      , Math.min(Math.abs(followee.x - (x-640)) + Math.abs(followee.y - (y+640))
-      , Math.abs(followee.x - (x+640)) + Math.abs(followee.y - (y+640))))))))));
+      int dx = Math.abs(followee.x - x);
+      int dy = Math.abs(followee.y - y);
+      int dist = Math.min(dx, 640 - dx) + Math.min(dy, 640 - dy);
       if(dist > 16) {
         for(int i = 0; i < (dist-16); i++) {
           if(turnPointMap.containsKey(x*1000 + y)) {

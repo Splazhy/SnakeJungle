@@ -22,7 +22,7 @@ public class BotHungrySnake extends Snake {
     facing = 3;
     normalSpeed = 1;
     curSpeed = normalSpeed;
-    VALUE = 5;
+    value = 5;
     targetedFood = new int[2];
     targetedFood[0] = Apple.appleX;
     targetedFood[1] = Apple.appleY;
@@ -153,7 +153,7 @@ public class BotHungrySnake extends Snake {
 				Node n;
 				if (i == 0) {
 					if (current.getDirection() == 1) { // Continue Left
-						if (GridMap.freeCells.contains((current.getxAxis() - 1 )*100 + current.getyAxis())){
+						if (GridMap.freeCells.contains((current.getxAxis() - 1)*100 + current.getyAxis())){
 							n = new Node(current.getxAxis() - 1, current.getyAxis(), gCost, findHCost(current.getxAxis(), current.getyAxis()));
 							if (open.contains(n) || closed.contains(n)) {
 								exists = true;

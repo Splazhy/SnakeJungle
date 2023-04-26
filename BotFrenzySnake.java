@@ -11,7 +11,7 @@ public class BotFrenzySnake extends Snake {
     super(3);
     normalSpeed = 1;
     curSpeed = normalSpeed;
-    VALUE = 5;
+    value = 5;
   }
 
   @Override

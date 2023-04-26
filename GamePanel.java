@@ -3,7 +3,8 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JPanel;
@@ -22,8 +23,12 @@ public class GamePanel extends JPanel implements Runnable {
   protected int audioIconIdx;
   private Thread gameThread;
 
-  protected static ArrayList<GameHitbox> hitboxList;
+  protected static CopyOnWriteArrayList<GameHitbox> hitboxList;
   protected static CopyOnWriteArrayList<Snake> botList;
+  protected static Queue<GameHitbox> botPartRemoveQueue;
+  protected static Queue<Snake> botRemoveQueue;
+  private BufferedImage gridImage;
+  private Graphics2D g2d;
   protected GridMap gridMap;
   protected PlayerSnake player;
   protected BotSpawner botSpawner;
@@ -33,7 +38,7 @@ public class GamePanel extends JPanel implements Runnable {
     keyH = new KeyHandler(this);
     graphicUI = new GraphicUI(this);
     
-    hitboxList = new ArrayList<>();
+    hitboxList = new CopyOnWriteArrayList<>();
     botList = new CopyOnWriteArrayList<>();
 
     audioSlider = new JSlider(JSlider.VERTICAL, 1, 10000, 10000);
@@ -48,10 +53,9 @@ public class GamePanel extends JPanel implements Runnable {
       }
     });
     audioSlider.setMajorTickSpacing(1);
-    audioSlider.setBackground(Color.orange);
     audioSlider.setFocusable(false);
     add(audioSlider);
-    
+
     setLayout(null);
     setPreferredSize(new Dimension(800, 640));
     setDoubleBuffered(true);
@@ -81,11 +85,11 @@ public class GamePanel extends JPanel implements Runnable {
       deltaTime += (curTime - lastTime) / interval;
       lastTime = System.nanoTime();
 
-      if(deltaTime >= 1) {
+      while(deltaTime >= 1) {
         update();
-        repaint();
         --deltaTime;
       }
+      repaint();
       
     }
   }
@@ -97,9 +101,13 @@ public class GamePanel extends JPanel implements Runnable {
     hitboxList.clear();
     botList.clear();
 
+    gridImage = new BufferedImage(640, 640, BufferedImage.TYPE_INT_ARGB);
+    g2d = gridImage.createGraphics();
     gridMap = new GridMap();
     player = new PlayerSnake(gridMap, keyH);
     botSpawner = new BotSpawner();
+    botPartRemoveQueue = new LinkedList<>();
+    botRemoveQueue = new LinkedList<>();
     apple = new Apple(gridMap);
 
     Score.restart();
@@ -111,6 +119,8 @@ public class GamePanel extends JPanel implements Runnable {
     gridMap = null;
     player = null;
     botSpawner = null;
+    botPartRemoveQueue = null;
+    botRemoveQueue = null;
     apple = null;
 
     hitboxList.clear();
@@ -135,6 +145,10 @@ public class GamePanel extends JPanel implements Runnable {
         SoundPlayer.playGameOverSound();
         state = State.GAMEOVER;
       }
+      hitboxList.removeAll(botPartRemoveQueue);
+      botList.removeAll(botRemoveQueue);
+      botPartRemoveQueue.clear();
+      botRemoveQueue.clear();
     } else if(state == State.LOADING) {
       repaint();
       load();
@@ -146,18 +160,18 @@ public class GamePanel extends JPanel implements Runnable {
   @Override
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
-    BufferedImage gridImage = new BufferedImage(640, 640, BufferedImage.TYPE_INT_ARGB);
     Graphics2D scaledg2d = (Graphics2D)g;
-    Graphics2D g2d = gridImage.createGraphics();
 
     if(state.screen == 1) {
       gridMap.draw(g2d);
       apple.draw(g2d);
       
-      for(Snake s : botList)
-        s.draw(g2d);
+      for(Snake bot : botList)
+      bot.draw(g2d);
       
       player.draw(g2d);
+
+      botSpawner.draw(g2d);
 
       if(isDebugging) {
         for(GameHitbox r : hitboxList) {
@@ -179,7 +193,6 @@ public class GamePanel extends JPanel implements Runnable {
     
     graphicUI.drawUI(scaledg2d);
 
-    g2d.dispose();
   }
 
   protected void updatePanel() {
