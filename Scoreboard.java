@@ -40,7 +40,7 @@ public class Scoreboard {
 
     public static Profile getToBeat(String self) {
         int idx = leaderboard.indexOf(scoreboard.get(self));
-        return (idx != 0) ? leaderboard.get(idx-1) : null;
+        return (idx > 0) ? leaderboard.get(idx-1) : null;
     }
 
     public boolean hasName(String name) {

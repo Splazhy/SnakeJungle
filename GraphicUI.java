@@ -15,11 +15,14 @@ public class GraphicUI {
   public static Font titleFont;
   public static Font normalFont;
 
+  private GameoverTimer timer;
+
   private BufferedImage[] audioIcon;
 
-  public GraphicUI(GamePanel gp) {
+  public GraphicUI(GamePanel gp, GameoverTimer timer) {
     this.gp = gp;
     audioIcon = new BufferedImage[4];
+    this.timer = timer;
     try {
       titleFont = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/DayDream.ttf")).deriveFont(50f);
       normalFont = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/W95FA.otf")).deriveFont(30f);
@@ -62,6 +65,8 @@ public class GraphicUI {
       g2d.drawString("PAUSED", 40, Main.height/8);
       g2d.drawString("[ESC] continue game", 40, Main.height/8+40);
       g2d.drawString("[ENTER] to title screen", 40, Main.height/8+80);
+      g2d.drawString("Control", Main.width/40, 570);
+      g2d.drawString("[W, A, S, D]", Main.width/40, 600);
       break;
 
     case GAMEOVER:
@@ -70,9 +75,11 @@ public class GraphicUI {
       g2d.setFont(normalFont.deriveFont(Main.width/18f));
       g2d.setColor(new ColorUIResource(190, 68, 55));
       g2d.drawString("GAME OVER", getCenteredX("GAME OVER", g2d), Main.height/2 - 80);
-      g2d.setFont(normalFont.deriveFont(Main.width/48f));
-      g2d.drawString("[ENTER] restart", getCenteredX("[ENTER] restart", g2d), Main.height/2);
-      g2d.drawString("[ESC] to title screen", getCenteredX("[ESC] to title screen", g2d), Main.height/2 + 40);
+      g2d.setFont(normalFont.deriveFont(70f));
+      g2d.drawString(timer.toString(), getCenteredX(timer.toString(), g2d), Main.height/2+30);
+      g2d.setFont(normalFont);
+      g2d.drawString("Continue?", getCenteredX("Continue?", g2d), Main.height/2+100);
+      g2d.drawString("press [Enter]", getCenteredX("press [Enter]", g2d), Main.height/2 + 140);
 
     case PLAYZONE:
       g2d.setColor(Color.WHITE);
@@ -91,6 +98,8 @@ public class GraphicUI {
       // draws gameplay UI here
       g2d.drawString(Score.MAX_SCORE(), Main.width/40, 280);
       g2d.drawString(Score.CUR_SCORE(), Main.width/40, 320);
+      g2d.drawString("Control", Main.width/40, 570);
+      g2d.drawString("[W, A, S, D]", Main.width/40, 600);
 
       break;
     }

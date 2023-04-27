@@ -62,7 +62,7 @@ public class KeyHandler implements KeyListener {
     switch(GamePanel.state) {
     case MENU:
       if(released == KeyEvent.VK_ENTER) {
-        if(gp.nameField.getText().matches("^[a-zA-Z]{2,}$"))
+        if(gp.nameField.getText().matches("^[a-zA-Z0-9]{2,15}$"))
           GamePanel.state = State.LOADING;
       }
       break;

@@ -19,6 +19,7 @@ public class GamePanel extends JPanel implements Runnable {
   protected static State state;
   protected static boolean isDebugging = false;
   private KeyHandler keyH;
+  private GameoverTimer timer;
   private GraphicUI graphicUI;
 
   private Scoreboard scoreboard;
@@ -42,7 +43,8 @@ public class GamePanel extends JPanel implements Runnable {
 
   public GamePanel() {
     keyH = new KeyHandler(this);
-    graphicUI = new GraphicUI(this);
+    timer = new GameoverTimer(this, 6);
+    graphicUI = new GraphicUI(this, timer);
 
     scoreboard = new Scoreboard("scoreboard.txt");
     
@@ -118,6 +120,8 @@ public class GamePanel extends JPanel implements Runnable {
     nameField.setVisible(false);
     audioSlider.setVisible(false);
 
+    timer.reset();
+
     hitboxList.clear();
     botList.clear();
 
@@ -148,7 +152,10 @@ public class GamePanel extends JPanel implements Runnable {
     botRemoveQueue = null;
     apple = null;
 
+    timer.reset();
+
     scoreboard.save("scoreboard.txt");
+    nameField.setText("");
 
     hitboxList.clear();
     botList.clear();
@@ -172,6 +179,7 @@ public class GamePanel extends JPanel implements Runnable {
       else {
         SoundPlayer.playGameOverSound();
         state = State.GAMEOVER;
+        timer.start();
       }
       hitboxList.removeAll(botPartRemoveQueue);
       botList.removeAll(botRemoveQueue);
