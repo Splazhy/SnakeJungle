@@ -8,10 +8,7 @@ public class Score {
         if (maxScore < curScore) {
             maxScore = curScore;
             Scoreboard.getProfile(GamePanel.playerName).setHighScore(maxScore);
-            if(Scoreboard.getToBeat(GamePanel.playerName) != null 
-            && maxScore > Scoreboard.getToBeat(GamePanel.playerName).getHighScore()) {
-                Scoreboard.overtake(GamePanel.playerName);
-            }
+            Scoreboard.sort();
         }
     }
 

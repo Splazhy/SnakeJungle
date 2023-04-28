@@ -29,18 +29,8 @@ public class Scoreboard {
         Collections.sort(leaderboard);
     }
 
-    public static void overtake(String self) {
-        int idx = leaderboard.indexOf(scoreboard.get(self));
-        Collections.swap(leaderboard, idx-1, idx);
-    }
-
     public static Profile getProfile(String name) {
         return scoreboard.get(name.toLowerCase());
-    }
-
-    public static Profile getToBeat(String self) {
-        int idx = leaderboard.indexOf(scoreboard.get(self));
-        return (idx > 0) ? leaderboard.get(idx-1) : null;
     }
 
     public boolean hasName(String name) {
@@ -51,6 +41,10 @@ public class Scoreboard {
         Profile profile = new Profile(name.toLowerCase(), name, "0");
         scoreboard.put(name.toLowerCase(), profile);
         leaderboard.add(profile);
+    }
+
+    public static void sort() {
+        Collections.sort(leaderboard);
     }
 
     public void save(String filepath) {

@@ -1,7 +1,6 @@
 public class Profile implements Comparable<Profile> {
     private String name;
     private String actual;
-    private int placement;
     private int highscore;
 
     public Profile(String name, String actual, String highscore) {
@@ -16,14 +15,6 @@ public class Profile implements Comparable<Profile> {
 
     public String getActualName() {
         return actual;
-    }
-
-    public int getPlacement() {
-        return placement;
-    }
-
-    public void setPlacement(int placement) {
-        this.placement = placement;
     }
 
     public int getHighScore() {
