@@ -39,20 +39,22 @@ public class KeyHandler implements KeyListener {
     if(pressed == KeyEvent.VK_D) {
       movementIsHeld[3] = true;
     }
-    switch(GamePanel.state) {
-    case MENU: break;
-    case LOADING: break;
-    case PLAYZONE:
-      if(pressed == KeyEvent.VK_SEMICOLON) { // debug
-        gp.player.grow(5);
-      }
-      if(pressed == KeyEvent.VK_SLASH) {
-        Score.addScore(5);
-      }
-      break;
-    case PAUSE: break;
-    case GAMEOVER: break;
-    }
+
+    /* CHEAT MODE */
+    // switch(GamePanel.state) {
+    // case MENU: break;
+    // case LOADING: break;
+    // case PLAYZONE:
+    //   if(pressed == KeyEvent.VK_SEMICOLON) { // debug
+    //     gp.player.grow(5);
+    //   }
+    //   if(pressed == KeyEvent.VK_SLASH) {
+    //     Score.addScore(5);
+    //   }
+    //   break;
+    // case PAUSE: break;
+    // case GAMEOVER: break;
+    // }
   }
 
   @Override
@@ -62,7 +64,8 @@ public class KeyHandler implements KeyListener {
     switch(GamePanel.state) {
     case MENU:
       if(released == KeyEvent.VK_ENTER) {
-        GamePanel.state = State.LOADING;
+        if(gp.nameField.getText().matches("^[a-zA-Z0-9]{2,15}$"))
+          GamePanel.state = State.LOADING;
       }
       break;
     case LOADING: break;
@@ -96,6 +99,9 @@ public class KeyHandler implements KeyListener {
     }
     if(released == KeyEvent.VK_D) {
       movementIsHeld[3] = false;
+    }
+    if(released == KeyEvent.VK_F3) {
+      GamePanel.isDebugging = !GamePanel.isDebugging;
     }
   }
 }
