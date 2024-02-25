@@ -22,6 +22,7 @@ public class Scoreboard {
                 line = sc.nextLine().split(",");
                 scoreboard.put(line[0], new Profile(line[0], line[1], line[2]));
             }
+            sc.close();
         } catch(IOException e) {
             e.printStackTrace();
         }

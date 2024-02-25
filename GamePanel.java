@@ -116,7 +116,7 @@ public class GamePanel extends JPanel implements Runnable {
   }
 
   protected void load() {
-    // System.out.println("lesss go!"); // debug
+    
     nameField.setVisible(false);
     audioSlider.setVisible(false);
 
@@ -199,8 +199,8 @@ public class GamePanel extends JPanel implements Runnable {
     Graphics2D scaledg2d = (Graphics2D)g;
 
     if(state.screen == 1) {
-      gridMap.draw(g2d);
-      apple.draw(g2d);
+      if(gridMap != null) gridMap.draw(g2d);
+      if(apple != null) apple.draw(g2d);
       
       for(Snake bot : botList)
         bot.draw(g2d);
